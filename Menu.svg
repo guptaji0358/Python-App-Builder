@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="64"
+    height="64"
+    viewBox="0 0 24 24">
+
+    <defs>
+
+        <linearGradient id="glass"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%">
+
+            <stop offset="0%"
+                stop-color="#A5F3FC"/>
+
+            <stop offset="100%"
+                stop-color="#00D4FF"/>
+
+        </linearGradient>
+
+        <filter id="glow">
+
+            <feDropShadow dx="0"
+                        dy="0"
+                        stdDeviation="1.5"
+                        flood-color="#00D4FF"
+                        flood-opacity="0.8"/>
+
+        </filter>
+
+    </defs>
+
+    <!-- Top -->
+
+    <rect x="4"
+        y="5"
+        width="16"
+        height="2.2"
+        rx="1.1"
+        fill="url(#glass)"
+        filter="url(#glow)"/>
+
+    <rect x="5"
+        y="5.25"
+        width="14"
+        height="0.4"
+        rx="0.2"
+        fill="white"
+        opacity="0.6"/>
+
+    <!-- Middle -->
+
+    <rect x="6"
+        y="10.9"
+        width="14"
+        height="2.2"
+        rx="1.1"
+        fill="url(#glass)"
+        filter="url(#glow)"/>
+
+    <rect x="7"
+        y="11.15"
+        width="12"
+        height="0.4"
+        rx="0.2"
+        fill="white"
+        opacity="0.6"/>
+
+    <!-- Bottom -->
+
+    <rect x="4"
+        y="16.8"
+        width="16"
+        height="2.2"
+        rx="1.1"
+        fill="url(#glass)"
+        filter="url(#glow)"/>
+
+    <rect x="5"
+        y="17.05"
+        width="14"
+        height="0.4"
+        rx="0.2"
+        fill="white"
+        opacity="0.6"/>
+
+</svg>
