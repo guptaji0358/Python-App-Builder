@@ -1,4 +1,7 @@
 from PySide6.QtWidgets import QMessageBox
+from PySide6.QtGui import QIcon
+
+from .assets_path import AssetsPath
 
 class Messages:
     @staticmethod
