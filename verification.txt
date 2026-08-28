@@ -1,4 +1,0 @@
-CompanyName=Robin Gupta Studios
-AuthorName=Robin Gupta
-Copyright=Copyright © Robin Gupta
-Trademark=RGS™

@@ -23,6 +23,11 @@ class ConvertPyToExe():
         ConvertPyToExeApp = QApplication(sys.argv)
 
         self.LoadVerificationSettings()
+
+        if not self.IsRegistrationComplete():
+            if not self.ShowRegistrationDialog():
+                sys.exit(0)
+
         self.CurrentProgress = 10
 
         self.FileIndex = {}
@@ -1543,10 +1548,10 @@ class ConvertPyToExe():
 
     def LoadVerificationSettings(self):
 
-        self.CompanyName = "Robin Gupta Studios"
-        self.AuthorName = "Robin Gupta"
-        self.Copyright = "Copyright © Robin Gupta"
-        self.Trademark = "RGS™"
+        self.CompanyName = ""
+        self.AuthorName = ""
+        self.Copyright = ""
+        self.Trademark = ""
 
         try:
             if not os.path.exists("verification.txt"):
@@ -1574,6 +1579,99 @@ class ConvertPyToExe():
 
         except Exception:
             pass
+
+    def IsRegistrationComplete(self):
+        return bool(
+                    self.CompanyName.strip()
+                    and self.AuthorName.strip()
+                    and self.Copyright.strip()
+                    and self.Trademark.strip()
+                )
+
+    def ShowRegistrationDialog(self):
+        Dialog = QDialog()
+        Dialog.setWindowTitle("Welcome - Registration Required")
+        Dialog.resize(500,350)
+        Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
+        Dialog.setStyleSheet(Style.DialogStyle)
+        Dialog.setWindowFlags(Dialog.windowFlags() & ~Qt.WindowCloseButtonHint)
+
+        MainLayout = QVBoxLayout()
+
+        InfoLabel = QLabel("Please fill in your details before you get started.")
+        InfoLabel.setStyleSheet(Style.LabelStyle)
+        InfoLabel.setWordWrap(True)
+        MainLayout.addWidget(InfoLabel)
+        MainLayout.addSpacing(10)
+
+        FormLayout = QFormLayout()
+
+        CompanyNameInput = QLineEdit()
+        CompanyNameInput.setStyleSheet(Style.InputStyle)
+
+        AuthorInput = QLineEdit()
+        AuthorInput.setStyleSheet(Style.InputStyle)
+
+        CopyrightInput = QLineEdit()
+        CopyrightInput.setStyleSheet(Style.InputStyle)
+
+        TrademarkInput = QLineEdit()
+        TrademarkInput.setStyleSheet(Style.InputStyle)
+
+        FormLayout.addRow("Company Name:",CompanyNameInput)
+        FormLayout.addRow("Author:",AuthorInput)
+        FormLayout.addRow("Copyright:",CopyrightInput)
+        FormLayout.addRow("Trademark:",TrademarkInput)
+
+        MainLayout.addLayout(FormLayout)
+        MainLayout.addStretch()
+
+        ButtonLayout = QHBoxLayout()
+        ButtonLayout.addStretch()
+
+        GetStartedButton = QPushButton("Get Started")
+        GetStartedButton.setCursor(Qt.PointingHandCursor)
+        GetStartedButton.setStyleSheet(Style.ButtonStyle)
+
+        ButtonLayout.addWidget(GetStartedButton)
+        MainLayout.addLayout(ButtonLayout)
+
+        Dialog.setLayout(MainLayout)
+
+        def HandleGetStarted():
+            if (
+                not CompanyNameInput.text().strip()
+                or not AuthorInput.text().strip()
+                or not CopyrightInput.text().strip()
+                or not TrademarkInput.text().strip()
+            ):
+                QMessageBox.warning(
+                                        Dialog,
+                                        "Missing Details",
+                                        "All fields are required before you can continue."
+                                    )
+                return
+
+            self.CompanyName = CompanyNameInput.text().strip()
+            self.AuthorName = AuthorInput.text().strip()
+            self.Copyright = CopyrightInput.text().strip()
+            self.Trademark = TrademarkInput.text().strip()
+
+            try:
+                with open("verification.txt","w",encoding="utf-8") as File:
+                    File.write(f"CompanyName={self.CompanyName}\n")
+                    File.write(f"AuthorName={self.AuthorName}\n")
+                    File.write(f"Copyright={self.Copyright}\n")
+                    File.write(f"Trademark={self.Trademark}\n")
+            except Exception as Error:
+                Messages.saveError(Dialog,str(Error))
+                return
+
+            Dialog.accept()
+
+        GetStartedButton.clicked.connect(HandleGetStarted)
+
+        return Dialog.exec() == QDialog.Accepted
 
     def GenerateVersionFile(self):
         VersionFilePath = "version_info.txt"
