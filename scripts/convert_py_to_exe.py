@@ -15,6 +15,7 @@ from .threads import FileIndexerThread, IconIndexerThread, BuildThread
 from .assets_path import AssetsPath
 from .style import Style
 from .messages import Messages
+from .shortcuts import ShortcutManager, SHORTCUT_LABELS
 
 class ConvertPyToExe():
 
@@ -101,9 +102,14 @@ class ConvertPyToExe():
         self.MainWindow.resize(1250,750)
 
         #Shortcuts
-        QShortcut(QKeySequence("Ctrl + Shift + B"),self.MainWindow,self.BrowseMultipleAssets)
-        QShortcut(QKeySequence("Ctrl + Shift + A"),self.MainWindow,self.AddAsset)
-        QShortcut(QKeySequence("Ctrl + Shift + R"),self.MainWindow,self.RemoveLastAssetRow)
+        self.ShortcutManager = ShortcutManager()
+        self.ShortcutActionHandlers = {
+                                        "AddAsset": self.AddAsset,
+                                        "BrowseMultipleAssets": self.BrowseMultipleAssets,
+                                        "RemoveLastAsset": self.RemoveLastAssetRow,
+                                        }
+        self.ShortcutObjects = {}
+        self.ApplyShortcuts()
         
         AppNameLabel = QLabel()
         AppNameLabel.setText("App Name:")
@@ -1388,21 +1394,38 @@ class ConvertPyToExe():
         #Shortcut Tab
         ShortcutsTab = QWidget()
         ShortcutsLayout = QVBoxLayout()
-        ShortcutsInfo = QLabel(
-                                """
-                                    #     Shortcut          Description
-                                
-                                    1  Ctrl + Shift + A  = Add Asset
+        ShortcutsFormLayout = QFormLayout()
 
-                                    2  Ctrl + Shift + B  = Browse Multiple Assets
+        self.ShortcutEdits = {}
 
-                                    3  Ctrl + Shift + R  = Remove Last Asset
-                                    """
-                                )
+        for Name,Label in SHORTCUT_LABELS.items():
+            Edit = QKeySequenceEdit(QKeySequence(self.ShortcutManager.Get(Name)))
+            Edit.setStyleSheet(Style.InputStyle)
+            self.ShortcutEdits[Name] = Edit
+            ShortcutsFormLayout.addRow(f"{Label}:",Edit)
 
-        ShortcutsInfo.setStyleSheet(Style.LabelStyle)
-        ShortcutsLayout.addWidget(ShortcutsInfo)
+        ShortcutsLayout.addLayout(ShortcutsFormLayout)
         ShortcutsLayout.addStretch()
+
+        ShortcutsButtonLayout = QHBoxLayout()
+        ShortcutsButtonLayout.addStretch()
+
+        ResetShortcutsButton = QPushButton("Reset")
+        ResetShortcutsButton.setCursor(Qt.PointingHandCursor)
+        ResetShortcutsButton.setToolTip("Reset to Saved Shortcuts")
+        ResetShortcutsButton.setStyleSheet(Style.SecondaryButtonStyle)
+        ResetShortcutsButton.clicked.connect(self.ResetShortcuts)
+
+        SaveShortcutsButton = QPushButton("Save Shortcuts")
+        SaveShortcutsButton.setCursor(Qt.PointingHandCursor)
+        SaveShortcutsButton.setToolTip("Save Shortcuts")
+        SaveShortcutsButton.setStyleSheet(Style.ButtonStyle)
+        SaveShortcutsButton.clicked.connect(self.SaveShortcuts)
+
+        ShortcutsButtonLayout.addWidget(ResetShortcutsButton)
+        ShortcutsButtonLayout.addWidget(SaveShortcutsButton)
+        ShortcutsLayout.addLayout(ShortcutsButtonLayout)
+
         ShortcutsTab.setLayout(ShortcutsLayout)
 
         # Customize Tab
@@ -1579,6 +1602,57 @@ class ConvertPyToExe():
 
         except Exception:
             pass
+
+    def ApplyShortcuts(self):
+        for Name,Handler in self.ShortcutActionHandlers.items():
+            KeySequenceText = self.ShortcutManager.Get(Name)
+
+            if Name in self.ShortcutObjects:
+                self.ShortcutObjects[Name].setKey(QKeySequence(KeySequenceText))
+            else:
+                self.ShortcutObjects[Name] = QShortcut(
+                                                            QKeySequence(KeySequenceText),
+                                                            self.MainWindow,
+                                                            Handler
+                                                        )
+
+    def SaveShortcuts(self):
+        try:
+            UsedSequences = {}
+
+            for Name,Edit in self.ShortcutEdits.items():
+                SequenceText = Edit.keySequence().toString()
+
+                if not SequenceText:
+                    continue
+
+                if SequenceText in UsedSequences:
+                    QMessageBox.warning(
+                                            self.MainWindow,
+                                            "Duplicate Shortcut",
+                                            f"'{SequenceText}' is already assigned to "
+                                            f"'{SHORTCUT_LABELS[UsedSequences[SequenceText]]}'."
+                                        )
+                    return
+
+                UsedSequences[SequenceText] = Name
+
+            for Name,Edit in self.ShortcutEdits.items():
+                SequenceText = Edit.keySequence().toString()
+
+                if SequenceText:
+                    self.ShortcutManager.Set(Name,SequenceText)
+
+            self.ShortcutManager.Save()
+            self.ApplyShortcuts()
+            Messages.settingsSaved(self.MainWindow)
+
+        except Exception as Error:
+            Messages.saveError(self.MainWindow,str(Error))
+
+    def ResetShortcuts(self):
+        for Name,Edit in self.ShortcutEdits.items():
+            Edit.setKeySequence(QKeySequence(self.ShortcutManager.Get(Name)))
 
     def IsRegistrationComplete(self):
         return bool(
