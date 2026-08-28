@@ -248,13 +248,15 @@ class BuildThread(QThread):
     ProgressChanged = Signal(int)
     BuildFinished = Signal()
 
-    def __init__(self,Command,ShowTerminal,SaveLocation,AppName):
+    def __init__(self,Command,ShowTerminal,SaveLocation,AppName,WorkingDirectory=None,AssetSourcePaths=None):
         super().__init__()
 
         self.command = Command
         self.ShowTerminal = ShowTerminal
         self.SaveLocation = SaveLocation
         self.AppName = AppName
+        self.WorkingDirectory = WorkingDirectory or os.getcwd()
+        self.AssetSourcePaths = AssetSourcePaths or []
 
         self.CancelRequested = False
         self.CurrentProgress = 10
@@ -271,6 +273,7 @@ class BuildThread(QThread):
 
             Process = subprocess.Popen(
                                             self.command,
+                                            cwd=self.WorkingDirectory,
                                             creationflags=subprocess.CREATE_NEW_CONSOLE
                                         )
 
@@ -292,9 +295,11 @@ class BuildThread(QThread):
         else:
             Process = subprocess.Popen(
                                         self.command,
+                                        cwd=self.WorkingDirectory,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.STDOUT,
-                                        text=True
+                                        text=True,
+                                        bufsize=1
                                     )
             
             for Line in Process.stdout:
@@ -362,9 +367,9 @@ class BuildThread(QThread):
 
         AppName = self.AppName
         Dist = self.SaveLocation
-        ParentBuildFolder = os.path.join(os.getcwd(),"build")
-        SpecFile = os.path.join(os.getcwd(),f"{AppName}.spec")
-        VersionFile = os.path.join(os.getcwd(),"version_info.txt")
+        ParentBuildFolder = os.path.join(self.WorkingDirectory,"build")
+        SpecFile = os.path.join(self.WorkingDirectory,f"{AppName}.spec")
+        VersionFile = os.path.join(self.WorkingDirectory,"version_info.txt")
 
         def RemoveReadOnly(Function, Path, ExcInfo):
             try:
@@ -443,12 +448,31 @@ class BuildThread(QThread):
                     except Exception as Error:
                         print("Delete failed:", Error)
 
+            self.CopyAssetsNextToExe()
+
         print("RETURN CODE =", ReturnCode)
 
         if ReturnCode == 0:
             self.ProgressChanged.emit(100)
             self.BuildFinished.emit()
             QThread.msleep(500)
+
+    def CopyAssetsNextToExe(self):
+        if not self.AssetSourcePaths:
+            return
+
+        OneDirFolder = os.path.join(self.SaveLocation, self.AppName)
+        DestinationFolder = OneDirFolder if os.path.isdir(OneDirFolder) else self.SaveLocation
+
+        for AssetPath in self.AssetSourcePaths:
+            try:
+                if os.path.exists(AssetPath):
+                    shutil.copy2(
+                                    AssetPath,
+                                    os.path.join(DestinationFolder,os.path.basename(AssetPath))
+                                )
+            except Exception as Error:
+                print("Asset copy failed:", AssetPath, Error)
 
         else:
             print("BUILD FAILED")

@@ -890,14 +890,19 @@ class ConvertPyToExe():
                                     "Python Not Found",
                                     "Could not find a Python interpreter with PyInstaller installed.\n\n"
                                     "This app was built with PyInstaller, so it cannot run PyInstaller "
-                                    "using itself. Please make sure Python is installed and available "
-                                    "on your system PATH."
+                                    "using itself. Please install Python and run:\n\n"
+                                    "    pip install pyinstaller\n\n"
+                                    "then make sure that Python is available on your system PATH."
                                 )
             return
 
         Command = [PythonExecutable,"-m","PyInstaller"]
         Command.extend(
                         [
+                            "--noconfirm",
+                            "--clean",
+                            "--paths",
+                            os.path.dirname(self.SelectedPythonFilePath),
                             "--hidden-import=ctypes",
                             "--hidden-import=PySide6",
                             "--hidden-import=PySide6.QtCore",
@@ -976,11 +981,13 @@ class ConvertPyToExe():
         if self.SaveAppLocationInput.text():
             Command.extend(["--distpath",self.SaveAppLocationInput.text()])
 
+        if not self.ValidateAssets():
+            return
+
+        AssetSourcePaths = []
+
         for Index in range(self.DynamicAssetsLayout.count()):
 
-            if not self.ValidateAssets():
-                return
-            
             RowWidget = self.DynamicAssetsLayout.itemAt(Index).widget()
 
             if RowWidget is None:
@@ -1000,7 +1007,8 @@ class ConvertPyToExe():
                                     f"{AssetPath};."
                                 ]
                                 )
-            
+                AssetSourcePaths.append(AssetPath)
+
         if self.AppNameInput.text().strip():
 
             Command.extend(
@@ -1019,6 +1027,7 @@ class ConvertPyToExe():
                             )
 
         Command.append(self.SelectedPythonFilePath)
+        self.AssetSourcePaths = AssetSourcePaths
         CommandString = (" ".join(Command))
 
         if self.ShowPyInstallerCommandCheckbox.isChecked():
@@ -1031,7 +1040,9 @@ class ConvertPyToExe():
                                             self.BuildCommand,
                                             self.AsksToHideorShowTerminalCheckbox.isChecked(),
                                             self.SaveAppLocationInput.text(),
-                                            self.AppNameInput.text()
+                                            self.AppNameInput.text(),
+                                            os.path.dirname(self.SelectedPythonFilePath),
+                                            self.AssetSourcePaths
                                         )
         self.BuildThread.ProgressChanged.connect(self.UpdateBuildProgress)
         self.BuildThread.BuildFinished.connect(
@@ -1052,14 +1063,27 @@ class ConvertPyToExe():
 
             self.BuildCompletedWindow(ExePath)
 
+    def HasPyInstaller(self,PythonExecutable):
+        try:
+            Result = subprocess.run(
+                                        [PythonExecutable,"-c","import PyInstaller"],
+                                        stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL,
+                                        timeout=15
+                                    )
+            return Result.returncode == 0
+
+        except Exception:
+            return False
+
     def GetPythonExecutable(self):
-        if not getattr(sys, "frozen", False):
+        if not getattr(sys, "frozen", False) and self.HasPyInstaller(sys.executable):
             return sys.executable
 
         for Candidate in ("python", "python3", "py"):
             Found = shutil.which(Candidate)
 
-            if Found:
+            if Found and self.HasPyInstaller(Found):
                 return Found
 
         return None
@@ -1308,7 +1332,9 @@ class ConvertPyToExe():
                                             Command,
                                             self.AsksToHideorShowTerminalCheckbox.isChecked(),
                                             self.SaveAppLocationInput.text(),
-                                            self.AppNameInput.text()
+                                            self.AppNameInput.text(),
+                                            os.path.dirname(self.SelectedPythonFilePath),
+                                            getattr(self,"AssetSourcePaths",[])
                                         )
         self.BuildThread.ProgressChanged.connect(self.UpdateBuildProgress)
         self.BuildThread.BuildFinished.connect(self.ProgressDialog.accept)
@@ -1757,7 +1783,10 @@ class ConvertPyToExe():
         return Dialog.exec() == QDialog.Accepted
 
     def GenerateVersionFile(self):
-        VersionFilePath = "version_info.txt"
+        VersionFilePath = os.path.join(
+                                        os.path.dirname(self.SelectedPythonFilePath),
+                                        "version_info.txt"
+                                        )
 
         Version = self.VersionInput.text().strip()
 
