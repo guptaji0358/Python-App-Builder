@@ -6,12 +6,14 @@ DEFAULT_SHORTCUTS = {
     "AddAsset": "Ctrl+Shift+A",
     "BrowseMultipleAssets": "Ctrl+Shift+B",
     "RemoveLastAsset": "Ctrl+Shift+R",
+    "FocusNextInput": "Ctrl+Shift+Return",
 }
 
 SHORTCUT_LABELS = {
     "AddAsset": "Add Asset",
     "BrowseMultipleAssets": "Browse Multiple Assets",
     "RemoveLastAsset": "Remove Last Asset",
+    "FocusNextInput": "Move to Next Input",
 }
 
 

@@ -107,6 +107,7 @@ class ConvertPyToExe():
                                         "AddAsset": self.AddAsset,
                                         "BrowseMultipleAssets": self.BrowseMultipleAssets,
                                         "RemoveLastAsset": self.RemoveLastAssetRow,
+                                        "FocusNextInput": self.FocusNextInput,
                                         }
         self.ShortcutObjects = {}
         self.ApplyShortcuts()
@@ -1610,11 +1611,19 @@ class ConvertPyToExe():
             if Name in self.ShortcutObjects:
                 self.ShortcutObjects[Name].setKey(QKeySequence(KeySequenceText))
             else:
-                self.ShortcutObjects[Name] = QShortcut(
-                                                            QKeySequence(KeySequenceText),
-                                                            self.MainWindow,
-                                                            Handler
-                                                        )
+                Shortcut = QShortcut(
+                                        QKeySequence(KeySequenceText),
+                                        self.MainWindow,
+                                        Handler
+                                    )
+                Shortcut.setContext(Qt.WidgetWithChildrenShortcut)
+                self.ShortcutObjects[Name] = Shortcut
+
+    def FocusNextInput(self):
+        FocusWidget = self.MainWindow.focusWidget()
+
+        if FocusWidget:
+            FocusWidget.focusNextChild()
 
     def SaveShortcuts(self):
         try:
