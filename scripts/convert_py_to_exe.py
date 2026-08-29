@@ -1698,7 +1698,7 @@ class ConvertPyToExe():
     def ShowSettingsWindow(self):
         Dialog = QDialog(self.MainWindow)
         Dialog.setWindowTitle("Settings")
-        Dialog.resize(700,450)
+        Dialog.resize(700,520)
         Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
         Dialog.setStyleSheet(Style.DialogStyle)
 
@@ -1863,9 +1863,45 @@ class ConvertPyToExe():
 
         # Customize Tab
         CustomizeTab = QWidget()
-        CustomizeOuterLayout = QVBoxLayout()
-        CustomizeLayout = QFormLayout()
-        EditButtonLayout = QHBoxLayout()
+        CustomizeOuterLayout = QVBoxLayout(CustomizeTab)
+        CustomizeOuterLayout.setSpacing(16)
+        CustomizeOuterLayout.setContentsMargins(2,10,2,2)
+
+        def CustomizeSectionTitle(Text):
+            Label = QLabel(Text)
+            Label.setStyleSheet(Style.LabelStyle)
+            Style.TextGlow(Label)
+            return Label
+
+        def CustomizeRadioPair(Options,Checked):
+            Group = QButtonGroup()
+            Layout = QHBoxLayout()
+            Layout.setSpacing(20)
+            Radios = {}
+
+            for Key,Text in Options:
+                Radio = QRadioButton(Text)
+                Radio.setStyleSheet(Style.RadioButtonStyle)
+                Radio.setCursor(Qt.PointingHandCursor)
+                Radio.setChecked(Key == Checked)
+                Group.addButton(Radio)
+                Radios[Key] = Radio
+                Layout.addWidget(Radio)
+
+            Layout.addStretch()
+            return Group,Radios,Layout
+
+        # --- Start Menu Shortcut card ---
+        StartMenuCard = QFrame()
+        StartMenuCard.setStyleSheet(Style.CardStyle)
+        StartMenuCardLayout = QVBoxLayout(StartMenuCard)
+        StartMenuCardLayout.setContentsMargins(20,16,20,18)
+        StartMenuCardLayout.setSpacing(10)
+
+        StartMenuCardLayout.addWidget(CustomizeSectionTitle("Start Menu Shortcut"))
+
+        StartMenuPathRow = QHBoxLayout()
+        StartMenuPathRow.setSpacing(10)
 
         self.StartMenuPathInput = QLineEdit()
         self.StartMenuPathInput.setStyleSheet(Style.InputStyle)
@@ -1874,55 +1910,65 @@ class ConvertPyToExe():
         self.StartMenuPathInput.setToolTip(AssetsPath.AddStartMenuShortcutPath)
 
         EditButton = QPushButton("Edit")
-        EditButton.setToolTip("Eddit Path")
+        EditButton.setToolTip("Edit Path")
         EditButton.setCursor(Qt.PointingHandCursor)
-        EditButton.setStyleSheet(Style.EdiButtonStyle)
+        EditButton.setFixedWidth(90)
+        EditButton.setStyleSheet(Style.SecondaryButtonStyle)
         EditButton.clicked.connect(self.EditStartMenuPath)
 
-        CustomizeLayout.addRow("Start Menu Path:",self.StartMenuPathInput)
-        EditButtonLayout.addStretch()
-        EditButtonLayout.addWidget(EditButton)
-        CustomizeLayout.addRow("",EditButtonLayout)
+        StartMenuPathRow.addWidget(self.StartMenuPathInput,1)
+        StartMenuPathRow.addWidget(EditButton)
 
-        DefaultsLabel = QLabel("Defaults for New Builds")
-        DefaultsLabel.setStyleSheet(Style.LabelStyle)
-        Style.TextGlow(DefaultsLabel)
+        StartMenuCardLayout.addLayout(StartMenuPathRow)
 
-        DefaultBuildTypeLayout = QHBoxLayout()
-        self.DefaultBuildTypeGroup = QButtonGroup()
+        # --- Build defaults card ---
+        DefaultsCard = QFrame()
+        DefaultsCard.setStyleSheet(Style.CardStyle)
+        DefaultsCardLayout = QVBoxLayout(DefaultsCard)
+        DefaultsCardLayout.setContentsMargins(20,16,20,18)
+        DefaultsCardLayout.setSpacing(14)
 
-        self.DefaultOneFileRadio = QRadioButton("One File")
-        self.DefaultOneFileRadio.setStyleSheet(Style.RadioButtonStyle)
-        self.DefaultOneFileRadio.setCursor(Qt.PointingHandCursor)
+        DefaultsCardLayout.addWidget(CustomizeSectionTitle("Defaults for New Builds"))
 
-        self.DefaultOneDirRadio = QRadioButton("One Dir")
-        self.DefaultOneDirRadio.setStyleSheet(Style.RadioButtonStyle)
-        self.DefaultOneDirRadio.setCursor(Qt.PointingHandCursor)
+        DefaultsGrid = QGridLayout()
+        DefaultsGrid.setHorizontalSpacing(16)
+        DefaultsGrid.setVerticalSpacing(10)
+        DefaultsGrid.setColumnStretch(1,1)
 
-        self.DefaultBuildTypeGroup.addButton(self.DefaultOneFileRadio)
-        self.DefaultBuildTypeGroup.addButton(self.DefaultOneDirRadio)
-        (self.DefaultOneFileRadio if self.CustomizationManager.Get("DefaultBuildType") == "OneFile" else self.DefaultOneDirRadio).setChecked(True)
+        BuildTypeRowLabel = QLabel("Build Type")
+        BuildTypeRowLabel.setStyleSheet(Style.LabelStyle)
 
-        DefaultBuildTypeLayout.addWidget(self.DefaultOneFileRadio)
-        DefaultBuildTypeLayout.addWidget(self.DefaultOneDirRadio)
+        self.DefaultBuildTypeGroup,BuildTypeRadios,DefaultBuildTypeLayout = CustomizeRadioPair(
+            [("OneFile","One File"),("OneDir","One Dir")],
+            self.CustomizationManager.Get("DefaultBuildType"),
+        )
+        self.DefaultOneFileRadio = BuildTypeRadios["OneFile"]
+        self.DefaultOneDirRadio = BuildTypeRadios["OneDir"]
 
-        DefaultConsoleModeLayout = QHBoxLayout()
-        self.DefaultConsoleModeGroup = QButtonGroup()
+        ConsoleModeRowLabel = QLabel("Console Mode")
+        ConsoleModeRowLabel.setStyleSheet(Style.LabelStyle)
 
-        self.DefaultNoConsoleRadio = QRadioButton("No Console")
-        self.DefaultNoConsoleRadio.setStyleSheet(Style.RadioButtonStyle)
-        self.DefaultNoConsoleRadio.setCursor(Qt.PointingHandCursor)
+        self.DefaultConsoleModeGroup,ConsoleModeRadios,DefaultConsoleModeLayout = CustomizeRadioPair(
+            [("NoConsole","No Console"),("WithConsole","Console")],
+            self.CustomizationManager.Get("DefaultConsoleMode"),
+        )
+        self.DefaultNoConsoleRadio = ConsoleModeRadios["NoConsole"]
+        self.DefaultWithConsoleRadio = ConsoleModeRadios["WithConsole"]
 
-        self.DefaultWithConsoleRadio = QRadioButton("Console")
-        self.DefaultWithConsoleRadio.setStyleSheet(Style.RadioButtonStyle)
-        self.DefaultWithConsoleRadio.setCursor(Qt.PointingHandCursor)
+        DefaultsGrid.addWidget(BuildTypeRowLabel,0,0)
+        DefaultsGrid.addLayout(DefaultBuildTypeLayout,0,1)
+        DefaultsGrid.addWidget(ConsoleModeRowLabel,1,0)
+        DefaultsGrid.addLayout(DefaultConsoleModeLayout,1,1)
 
-        self.DefaultConsoleModeGroup.addButton(self.DefaultNoConsoleRadio)
-        self.DefaultConsoleModeGroup.addButton(self.DefaultWithConsoleRadio)
-        (self.DefaultNoConsoleRadio if self.CustomizationManager.Get("DefaultConsoleMode") == "NoConsole" else self.DefaultWithConsoleRadio).setChecked(True)
+        DefaultsCardLayout.addLayout(DefaultsGrid)
 
-        DefaultConsoleModeLayout.addWidget(self.DefaultNoConsoleRadio)
-        DefaultConsoleModeLayout.addWidget(self.DefaultWithConsoleRadio)
+        CheckboxDivider = QFrame()
+        CheckboxDivider.setFrameShape(QFrame.HLine)
+        CheckboxDivider.setStyleSheet(f"background:{PALETTES.get(Style.Mode,PALETTES['Dark'])['CardBorder']};max-height:1px;border:none;")
+        DefaultsCardLayout.addWidget(CheckboxDivider)
+
+        CheckboxColumnLayout = QVBoxLayout()
+        CheckboxColumnLayout.setSpacing(10)
 
         self.DefaultCreateShortcutCheckbox = QCheckBox("Create Start Menu Shortcut")
         self.DefaultCreateShortcutCheckbox.setStyleSheet(Style.CheckBoxStyle)
@@ -1940,28 +1986,11 @@ class ConvertPyToExe():
         self.OpenFolderAfterBuildCheckbox.setToolTip("Automatically opens the output folder in Explorer once a build finishes.")
         self.OpenFolderAfterBuildCheckbox.setChecked(self.CustomizationManager.GetBool("OpenFolderAfterBuild"))
 
-        BuildTypeRowLayout = QHBoxLayout()
-        BuildTypeRowLabel = QLabel("Build Type:")
-        BuildTypeRowLabel.setStyleSheet(Style.LabelStyle)
-        BuildTypeRowLayout.addWidget(BuildTypeRowLabel)
-        BuildTypeRowLayout.addLayout(DefaultBuildTypeLayout)
-        BuildTypeRowLayout.addStretch()
+        CheckboxColumnLayout.addWidget(self.DefaultCreateShortcutCheckbox)
+        CheckboxColumnLayout.addWidget(self.DefaultShowCommandCheckbox)
+        CheckboxColumnLayout.addWidget(self.OpenFolderAfterBuildCheckbox)
 
-        ConsoleModeRowLayout = QHBoxLayout()
-        ConsoleModeRowLabel = QLabel("Console Mode:")
-        ConsoleModeRowLabel.setStyleSheet(Style.LabelStyle)
-        ConsoleModeRowLayout.addWidget(ConsoleModeRowLabel)
-        ConsoleModeRowLayout.addLayout(DefaultConsoleModeLayout)
-        ConsoleModeRowLayout.addStretch()
-
-        DefaultsSectionLayout = QVBoxLayout()
-        DefaultsSectionLayout.setSpacing(12)
-        DefaultsSectionLayout.addWidget(DefaultsLabel)
-        DefaultsSectionLayout.addLayout(BuildTypeRowLayout)
-        DefaultsSectionLayout.addLayout(ConsoleModeRowLayout)
-        DefaultsSectionLayout.addWidget(self.DefaultCreateShortcutCheckbox)
-        DefaultsSectionLayout.addWidget(self.DefaultShowCommandCheckbox)
-        DefaultsSectionLayout.addWidget(self.OpenFolderAfterBuildCheckbox)
+        DefaultsCardLayout.addLayout(CheckboxColumnLayout)
 
         SaveCustomizeButtonLayout = QHBoxLayout()
         SaveCustomizeButtonLayout.addStretch()
@@ -1969,17 +1998,16 @@ class ConvertPyToExe():
         SaveCustomizeButton = QPushButton("Save Defaults")
         SaveCustomizeButton.setCursor(Qt.PointingHandCursor)
         SaveCustomizeButton.setToolTip("Save Default Preferences")
+        SaveCustomizeButton.setFixedWidth(150)
         SaveCustomizeButton.setStyleSheet(Style.ButtonStyle)
         SaveCustomizeButton.clicked.connect(self.SaveCustomizationDefaults)
 
         SaveCustomizeButtonLayout.addWidget(SaveCustomizeButton)
 
-        CustomizeOuterLayout.addLayout(CustomizeLayout)
-        CustomizeOuterLayout.addSpacing(20)
-        CustomizeOuterLayout.addLayout(DefaultsSectionLayout)
+        CustomizeOuterLayout.addWidget(StartMenuCard)
+        CustomizeOuterLayout.addWidget(DefaultsCard)
         CustomizeOuterLayout.addStretch()
         CustomizeOuterLayout.addLayout(SaveCustomizeButtonLayout)
-        CustomizeTab.setLayout(CustomizeOuterLayout)
 
         # Developer Tab (Theme)
         DeveloperTab = QWidget()
