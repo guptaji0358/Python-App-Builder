@@ -10,7 +10,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#-requirements)
 [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?logo=qt&logoColor=white)](https://pypi.org/project/PySide6/)
 [![PyInstaller](https://img.shields.io/badge/powered%20by-PyInstaller-FFD43B?logo=python&logoColor=black)](https://pyinstaller.org/)
-[![Theme](https://img.shields.io/badge/theme-Light%20%7C%20Dark%20%7C%20System-8A2BE2)](#-theming)
+[![Theme](https://img.shields.io/badge/theme-Light%20%7C%20Dark%20%7C%20System%20%7C%20Developer-8A2BE2)](#-theming)
 [![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)](#-license)
 
 <sub>Author **Robin Gupta** · Assisted by **Claude Code**</sub>
@@ -44,20 +44,24 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>🔗</td><td><b>Start Menu shortcuts</b></td><td>Optionally create a shortcut for the built app, with a customizable install path</td></tr>
 <tr><td>🪪</td><td><b>Editable version metadata</b></td><td>Company, Author, Copyright, and Trademark are saved once and reused for every build</td></tr>
 <tr><td>⌨️</td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field</td></tr>
-<tr><td>🌗</td><td><b>Light / Dark / System theme</b></td><td>Switch appearance from <i>Settings → Developer</i> — auto-follows your Windows theme when set to System</td></tr>
+<tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Developer</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
+<tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
 </table>
 
 <br>
 
 ## 🌗 Theming
 
-Open **Settings → Developer** to choose how the app looks:
+The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads. Change it later from **Settings → Developer**:
 
 | Mode | Behavior |
 |---|---|
-| ☀️ **Light** | Always renders the light palette |
-| 🌙 **Dark** | Always renders the dark palette *(default)* |
+| ☀️ **Light** | A clean, bright palette |
+| 🌙 **Dark** | A refreshed slate-navy dark palette *(default)* |
 | 🖥️ **System** | Follows the Windows "Choose your mode" setting automatically |
+| 🧑‍💻 **Developer** | The app's original hand-tuned look, kept as its own selectable mode |
+
+Every switch — in the picker or in Settings — **crossfades** the window instead of snapping instantly.
 
 The panel shows the **currently resolved mode** live (e.g. `System → Dark`) and previews your selection instantly. Your choice is saved to `theme.txt` and restored on the next launch — restart the app after saving so every element repaints with the new palette.
 
@@ -129,7 +133,7 @@ The gear icon opens a tabbed **Settings** window:
 | **Verify** | Company Name, Author, Copyright, Trademark used as build metadata |
 | **Shortcut** | Rebind every keyboard shortcut in the app |
 | **Customize** | Change where Start Menu shortcuts get created |
-| **Developer** | Light / Dark / System theme switch |
+| **Developer** | Light / Dark / System / Developer theme switch, animated on change |
 | **About** | App name, version, description, and developer credit |
 
 <br>

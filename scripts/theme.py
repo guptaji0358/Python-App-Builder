@@ -5,12 +5,16 @@ THEME_FILE = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "theme.txt"
 )
 
-MODES = ("Dark", "Light", "System")
+MODES = ("Light", "Dark", "System", "Developer")
 
 
 class ThemeManager:
-    """Persists the user's theme preference (Dark / Light / System) and
-    resolves "System" down to the OS's current light/dark setting."""
+    """Persists the user's theme preference (Light / Dark / System / Developer)
+    and resolves "System" down to the OS's current light/dark setting."""
+
+    @staticmethod
+    def HasSavedChoice():
+        return os.path.exists(THEME_FILE)
 
     @staticmethod
     def Get():
@@ -50,8 +54,8 @@ class ThemeManager:
 
     @classmethod
     def Resolve(cls, Mode=None):
-        """Returns the actual mode ("Dark"/"Light") to render, resolving
-        "System" against the current OS setting."""
+        """Returns the actual palette to render ("Light"/"Dark"/"Developer"),
+        resolving "System" against the current OS setting."""
         Mode = Mode or cls.Get()
         if Mode == "System":
             return cls.DetectSystemMode()

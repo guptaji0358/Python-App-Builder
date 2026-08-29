@@ -27,6 +27,9 @@ class ConvertPyToExe():
         self.ThemeMode = ThemeManager.Get()
         Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
 
+        if not ThemeManager.HasSavedChoice():
+            self.ShowFirstRunThemeDialog()
+
         self.LoadVerificationSettings()
 
         if not self.IsRegistrationComplete():
@@ -1351,14 +1354,111 @@ class ConvertPyToExe():
             self.CreateStartMenuShortcut(ExePath)
             self.BuildCompletedWindow(exepath=ExePath)
 
+    def ShowFirstRunThemeDialog(self):
+        Dialog = QDialog()
+        Dialog.setWindowTitle("Choose Your Theme")
+        Dialog.resize(380,320)
+        Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
+        Dialog.setStyleSheet(Style.DialogStyle)
+
+        Layout = QVBoxLayout()
+
+        TitleLabel = QLabel("Welcome! Pick a theme to get started.")
+        TitleLabel.setStyleSheet(Style.LabelStyle)
+        TitleLabel.setWordWrap(True)
+        Style.TextGlow(TitleLabel)
+
+        Group = QButtonGroup(Dialog)
+        Radios = {}
+
+        Layout.addSpacing(6)
+        Layout.addWidget(TitleLabel)
+        Layout.addSpacing(14)
+
+        for Mode in ("Light","Dark","System","Developer"):
+            Radio = QRadioButton(Mode)
+            Radio.setStyleSheet(Style.RadioButtonStyle)
+            Radio.setCursor(Qt.PointingHandCursor)
+            if Mode == self.ThemeMode:
+                Radio.setChecked(True)
+            Group.addButton(Radio)
+            Radios[Mode] = Radio
+            Layout.addWidget(Radio)
+
+        def PreviewSelection(Mode):
+            Style.ApplyTheme(ThemeManager.Resolve(Mode))
+            Dialog.setStyleSheet(Style.DialogStyle)
+            TitleLabel.setStyleSheet(Style.LabelStyle)
+            for R in Radios.values():
+                R.setStyleSheet(Style.RadioButtonStyle)
+
+        for Mode,Radio in Radios.items():
+            Radio.toggled.connect(lambda Checked,M=Mode: PreviewSelection(M) if Checked else None)
+
+        Layout.addStretch()
+
+        ContinueButton = QPushButton("Continue")
+        ContinueButton.setCursor(Qt.PointingHandCursor)
+        ContinueButton.setStyleSheet(Style.ButtonStyle)
+
+        def Confirm():
+            for Mode,Radio in Radios.items():
+                if Radio.isChecked():
+                    self.ThemeMode = Mode
+                    break
+            ThemeManager.Set(self.ThemeMode)
+            Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
+            Dialog.accept()
+
+        ContinueButton.clicked.connect(Confirm)
+
+        ButtonLayout = QHBoxLayout()
+        ButtonLayout.addStretch()
+        ButtonLayout.addWidget(ContinueButton)
+        Layout.addLayout(ButtonLayout)
+
+        Dialog.setLayout(Layout)
+        Dialog.exec()
+
+    def AnimateThemeChange(self,ApplyFunction):
+        """Crossfades self.MainWindow while ApplyFunction swaps the palette."""
+        Effect = QGraphicsOpacityEffect(self.MainWindow)
+        self.MainWindow.setGraphicsEffect(Effect)
+
+        FadeOut = QPropertyAnimation(Effect,b"opacity",self.MainWindow)
+        FadeOut.setDuration(140)
+        FadeOut.setStartValue(1.0)
+        FadeOut.setEndValue(0.25)
+        FadeOut.setEasingCurve(QEasingCurve.OutCubic)
+
+        FadeIn = QPropertyAnimation(Effect,b"opacity",self.MainWindow)
+        FadeIn.setDuration(180)
+        FadeIn.setStartValue(0.25)
+        FadeIn.setEndValue(1.0)
+        FadeIn.setEasingCurve(QEasingCurve.InCubic)
+
+        def SwapAndFadeIn():
+            ApplyFunction()
+            FadeIn.start(QAbstractAnimation.DeleteWhenStopped)
+
+        FadeOut.finished.connect(SwapAndFadeIn)
+        FadeIn.finished.connect(lambda: self.MainWindow.setGraphicsEffect(None))
+
+        self.ThemeAnimations = (FadeOut,FadeIn)
+        FadeOut.start(QAbstractAnimation.DeleteWhenStopped)
+
     def PreviewTheme(self,Mode):
         Resolved = ThemeManager.Resolve(Mode)
-        Style.ApplyTheme(Resolved)
-        self.MainWindow.setStyleSheet(Style.MainWindowStyle)
-        self.CurrentThemeLabel.setText(
-            f"Current mode: {Resolved}" + (" (via System)" if Mode == "System" else "")
-        )
-        self.CurrentThemeLabel.setStyleSheet(Style.LabelStyle)
+
+        def Apply():
+            Style.ApplyTheme(Resolved)
+            self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+            self.CurrentThemeLabel.setText(
+                f"Current mode: {Resolved}" + (" (via System)" if Mode == "System" else "")
+            )
+            self.CurrentThemeLabel.setStyleSheet(Style.LabelStyle)
+
+        self.AnimateThemeChange(Apply)
 
     def SaveThemeSettings(self):
         for Mode,Radio in self.ThemeRadios.items():
@@ -1366,8 +1466,12 @@ class ConvertPyToExe():
                 self.ThemeMode = Mode
                 break
         ThemeManager.Set(self.ThemeMode)
-        Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
-        self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+
+        def Apply():
+            Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
+            self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+
+        self.AnimateThemeChange(Apply)
 
     def ShowSettingsWindow(self):
         Dialog = QDialog(self.MainWindow)
@@ -1511,7 +1615,7 @@ class ConvertPyToExe():
         self.ThemeGroup = QButtonGroup()
         self.ThemeRadios = {}
 
-        for Mode in ("Light","Dark","System"):
+        for Mode in ("Light","Dark","System","Developer"):
             Radio = QRadioButton(Mode)
             Radio.setStyleSheet(Style.RadioButtonStyle)
             Radio.setCursor(Qt.PointingHandCursor)

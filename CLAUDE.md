@@ -26,7 +26,9 @@ All source lives under `scripts/`:
 
 ### Theming
 
-`style.py` builds every stylesheet constant (`Style.MainWindowStyle`, `Style.InputStyle`, etc.) from a `PALETTES` dict keyed `"Dark"` / `"Light"` via `Style.ApplyTheme(mode)`, which rebinds the class attributes at runtime. `ConvertPyToExe.__init__` calls `Style.ApplyTheme(ThemeManager.Resolve(...))` before building any widgets. The Settings dialog's **Developer** tab lets the user pick Light/Dark/System, live-previews by re-applying `Style.ApplyTheme` + re-setting `self.MainWindow`'s stylesheet, and persists the choice via `ThemeManager.Set()` on Save.
+`style.py` builds every stylesheet constant (`Style.MainWindowStyle`, `Style.InputStyle`, etc.) from a `PALETTES` dict keyed `"Light"` / `"Dark"` / `"Developer"` via `Style.ApplyTheme(mode)`, which rebinds the class attributes at runtime. `"Developer"` is the app's original hand-tuned palette, kept byte-for-byte and offered as its own selectable mode; `"Dark"` is a distinct, newer slate-navy palette. `"System"` is not a palette itself — `ThemeManager.Resolve()` maps it to `"Light"`/`"Dark"` via the Windows registry (`AppsUseLightTheme`) before `Style.ApplyTheme` ever sees it.
+
+`ConvertPyToExe.__init__` calls `Style.ApplyTheme(ThemeManager.Resolve(...))` before building any widgets, and — on first run only (no `theme.txt` yet) — shows a one-time theme-picker dialog (`ShowFirstRunThemeDialog`) before the registration dialog. The Settings dialog's **Developer** tab (radio buttons: Light/Dark/System/Developer) live-previews via `PreviewTheme`, and both it and `SaveThemeSettings` route through `AnimateThemeChange`, which crossfades `self.MainWindow` with a `QGraphicsOpacityEffect` + `QPropertyAnimation` pair while the palette swaps underneath.
 
 Only the top-level window stylesheet is guaranteed to repaint live — most child widgets (buttons, inputs, cards) had their stylesheet strings baked in at construction time and only pick up a new palette on the next app launch. When adding a new themed constant to `style.py`, add it inside `Style.ApplyTheme`, not as a bare class attribute, or it won't respond to theme changes at all.
 
