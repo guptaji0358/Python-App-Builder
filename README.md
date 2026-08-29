@@ -88,6 +88,7 @@ App Builder/
 │   ├── customization.py        #   Default build preferences (Settings > Customize), persisted to customization.txt
 │   ├── user_data.py            #   Resolves the user-data/ folder every persistence module writes into
 │   ├── build_history.py        #   SQLite build history log (user-data/db/builds.db)
+│   ├── file_index_db.py        #   Separate SQLite caches for the .py / .ico search indexes
 │   ├── messages.py            #   Shared QMessageBox dialogs
 │   ├── shortcuts.py           #   Editable keyboard shortcut manager
 │   └── assets_path.py         #   Resolves paths to files in Assets/
@@ -159,6 +160,8 @@ Generated at runtime, per-machine, and **not tracked in git**. Everything the ap
 | `user-data/theme.txt` | Selected theme mode (`Light` / `Dark` / `System` / `Developer`) |
 | `user-data/customization.txt` | Default build preferences set from *Settings → Customize* |
 | `user-data/db/builds.db` | SQLite log of every successful build (app name, output path, size, timestamp) |
+| `user-data/db/py_index.db` | Cached `.py` file search index, for instant autocomplete on startup |
+| `user-data/db/icon_index.db` | Cached `.ico` file search index, for instant autocomplete on startup |
 | `version_info.txt` | Temporary PyInstaller version resource file — written next to the *script being converted*, cleaned up after each build (not part of `user-data/`) |
 
 <br>

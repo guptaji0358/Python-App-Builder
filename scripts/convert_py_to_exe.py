@@ -20,6 +20,7 @@ from .theme import ThemeManager
 from .customization import CustomizationManager
 from .user_data import UserDataPath, EnsureUserDataDirs
 from .build_history import BuildHistory
+from .file_index_db import PyFileIndexDatabase, IconFileIndexDatabase
 
 APP_VERSION = "1.0.0.0"
 REPOSITORY_URL = "https://github.com/guptaji0358/Python-App-Builder"
@@ -57,8 +58,10 @@ class ConvertPyToExe():
 
         self.CurrentProgress = 10
 
-        self.FileIndex = {}
-        self.IconIndex = {}
+        self.PyIndexDB = PyFileIndexDatabase()
+        self.IconIndexDB = IconFileIndexDatabase()
+        self.FileIndex = self.PyIndexDB.Load()
+        self.IconIndex = self.IconIndexDB.Load()
 
         self.UpdateSplash("Indexing Python files...")
 
@@ -861,6 +864,7 @@ class ConvertPyToExe():
 
     def StoreFileIndex(self, Index):
         self.FileIndex = Index
+        self.PyIndexDB.Save(Index)
 
     def ValidateIconFile(self):
         FileName = self.IconFileInput.text()
@@ -918,6 +922,7 @@ class ConvertPyToExe():
 
     def StoreIconIndex(self, Index):
         self.IconIndex = Index
+        self.IconIndexDB.Save(Index)
 
     def BuildApplication(self):
 

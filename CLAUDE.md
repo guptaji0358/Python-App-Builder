@@ -26,6 +26,7 @@ All source lives under `scripts/`:
 | `customization.py` | `CustomizationManager` — persists default build preferences (build type, console mode, shortcut/command checkboxes, open-folder-after-build, Start Menu path) to `customization.txt`, same flat `key=value` format as `shortcuts.py`. |
 | `user_data.py` | `UserDataPath()`/`DbPath()`/`EnsureUserDataDirs()` — the single source of truth for where per-machine state lives (`user-data/`, `user-data/db/`). Every other persistence module builds its file path from this. |
 | `build_history.py` | `BuildHistory` — SQLite log of every successful build (`user-data/db/builds.db`), recorded from `BuildCompletedWindow`. |
+| `file_index_db.py` | `PyFileIndexDatabase` / `IconFileIndexDatabase` — separate SQLite caches (`user-data/db/py_index.db`, `icon_index.db`) of the `.py` / `.ico` search indexes, so autocomplete has data instantly on startup instead of waiting on a fresh full-disk scan. |
 | `assets_path.py` | Resolves paths into `Assets/` (handles dev vs. frozen/PyInstaller-bundled paths via `AssetPath` / `AssetsPath`). |
 
 ### Theming
@@ -65,6 +66,7 @@ Everything the app persists about itself lives under `user-data/` (see `scripts/
 - `user-data/theme.txt` — selected theme mode (`Light` / `Dark` / `System` / `Developer`).
 - `user-data/customization.txt` — default build preferences from *Settings → Customize* (build type, console mode, shortcut/show-command checkboxes, open-folder-after-build, Start Menu path).
 - `user-data/db/builds.db` — SQLite log of every successful build (`scripts/build_history.py`'s `BuildHistory`), recorded from `BuildCompletedWindow`.
+- `user-data/db/py_index.db`, `user-data/db/icon_index.db` — cached `.py` / `.ico` file search indexes (`scripts/file_index_db.py`). Loaded on startup before `FileIndexerThread`/`IconIndexerThread` even start, and rewritten wholesale (`DELETE FROM files` + bulk insert) each time a background scan finishes (`StoreFileIndex`/`StoreIconIndex`).
 
 `version_info.txt` is the one exception — it's a temporary PyInstaller version resource written next to the *target script being converted* (not this app's own data) and deleted after each build.
 
