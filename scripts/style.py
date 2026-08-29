@@ -105,6 +105,15 @@ class Style:
         # Dark and Light render on a fully opaque, static background.
         cls.WindowOpacity = 0.76 if cls.Mode == "Developer" else 1.0
 
+        # The Light palette is bright, so white check/radio glyphs and
+        # low-alpha white overlays need swapping for higher-contrast ones.
+        IsLight = cls.Mode == "Light"
+        CheckedIcon = AssetsPath.CheckedOnLight if IsLight else AssetsPath.Checked
+        UncheckedIcon = AssetsPath.UncheckedOnLight if IsLight else AssetsPath.Unchecked
+        AccentAlpha = 235 if IsLight else 40
+        AccentHoverAlpha = 235 if IsLight else 40
+        AccentPressedAlpha = 255 if IsLight else 80
+
         cls.MainWindowStyle = f"""
                                 QWidget
                                         {{
@@ -165,6 +174,16 @@ class Style:
                                                 {{
                                                     border:1px solid rgb(59,130,246);
                                                 }}
+
+                                QComboBox QAbstractItemView
+                                                            {{
+                                                                background-color: {Palette['DialogBg']};
+                                                                color: {Palette['Text']};
+                                                                border: 1px solid {Palette['ComboBorder']};
+                                                                outline: none;
+                                                                selection-background-color: rgba(0,170,255,120);
+                                                                selection-color: white;
+                                                            }}
                         """
 
         cls.CardStyle = f"""
@@ -176,28 +195,28 @@ class Style:
                                 }}
                     """
 
-        cls.ButtonStyle = """
+        cls.ButtonStyle = f"""
                             QPushButton
-                                        {
-                                            background: rgba(0,170,255,40);
+                                        {{
+                                            background: rgba(0,170,255,{AccentAlpha});
                                             border:none;
                                             border-radius:20px;
                                             color:white;
                                             padding:12px;
                                             font-size:11pt;
                                             font-weight:700;
-                                        }
+                                        }}
 
                             QPushButton:hover
-                                                {
-                                                    background: rgba(0,170,255,40);
+                                                {{
+                                                    background: rgba(0,170,255,{AccentHoverAlpha});
                                                     border:3px solid rgba(0,170,255,255);
-                                                }
+                                                }}
 
                             QPushButton:pressed
-                                                {
-                                                    background: rgba(0,170,255,80);
-                                                }
+                                                {{
+                                                    background: rgba(0,170,255,{AccentPressedAlpha});
+                                                }}
                     """
 
         cls.SecondaryButtonStyle = f"""
@@ -342,7 +361,7 @@ class Style:
 
                                 QCheckBox::indicator:checked
                                                                 {{
-                                                                    image: url({AssetsPath.Checked});
+                                                                    image: url({CheckedIcon});
                                                                     border: none;
                                                                 }}
 
@@ -370,7 +389,7 @@ class Style:
 
                                 QRadioButton::indicator:unchecked
                                                                     {{
-                                                                        image: url({AssetsPath.Unchecked});
+                                                                        image: url({UncheckedIcon});
                                                                     }}
 
                                 QRadioButton::indicator:checked
@@ -434,7 +453,7 @@ class Style:
         cls.ProgressBarStyle = """
                                 QProgressBar
                                                 {
-                                                    background: rgba(255,255,255,12);
+                                                    background: rgba(20,20,20,130);
                                                     border: 1px solid rgba(255,255,255,60);
                                                     border-radius: 10px;
                                                     padding: 0px;
@@ -566,10 +585,10 @@ class Style:
 
                         """
 
-        cls.AddAssetButtonStyle = """
+        cls.AddAssetButtonStyle = f"""
                                     QPushButton
-                                                {
-                                                    background: rgba(0,170,255,25);
+                                                {{
+                                                    background: rgba(0,170,255,{AccentAlpha});
                                                     color: rgb(255,255,255);
                                                     border: none;
                                                     border-radius: 22px;
@@ -577,19 +596,19 @@ class Style:
                                                     font-weight: 900;
                                                     padding-left: 20px;
                                                     padding-right: 20px;
-                                                }
+                                                }}
 
                                     QPushButton:hover
-                                                        {
-                                                            background: rgba(0,170,255,50);
+                                                        {{
+                                                            background: rgba(0,170,255,{AccentHoverAlpha});
                                                             color: rgb(255,255,255);
                                                             border:2px solid rgba(0,170,255,255);
-                                                        }
+                                                        }}
 
                                     QPushButton:pressed
-                                                        {
-                                                            background: rgba(0,170,255,80);
-                                                        }
+                                                        {{
+                                                            background: rgba(0,170,255,{AccentPressedAlpha});
+                                                        }}
                                     """
 
         cls.CommandTextStyle = """
