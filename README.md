@@ -48,6 +48,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
 <tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
 <tr><td>🧩</td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
+<tr><td>🗃️</td><td><b>Build history</b></td><td>Every successful build is logged to a local SQLite database (<code>user-data/db/builds.db</code>)</td></tr>
 </table>
 
 <br>
@@ -85,6 +86,8 @@ App Builder/
 │   ├── Styles/                 #   One file per theme (light.py / dark.py / developer.py) + registry
 │   ├── theme.py                #   Light/Dark/System/Developer theme persistence + OS detection
 │   ├── customization.py        #   Default build preferences (Settings > Customize), persisted to customization.txt
+│   ├── user_data.py            #   Resolves the user-data/ folder every persistence module writes into
+│   ├── build_history.py        #   SQLite build history log (user-data/db/builds.db)
 │   ├── messages.py            #   Shared QMessageBox dialogs
 │   ├── shortcuts.py           #   Editable keyboard shortcut manager
 │   └── assets_path.py         #   Resolves paths to files in Assets/
@@ -117,7 +120,7 @@ On first run you'll be asked to fill in **Company Name, Author, Copyright, and T
 ### Build the executable
 
 ```bash
-python -m PyInstaller --noconfirm --onefile --windowed ^
+python -m PyInstaller --noconfirm --onedir --windowed ^
   --name "PythonAppBuilder" ^
   --icon "APP_BUILDER_ICON.ico" ^
   --add-data "Assets;Assets" ^
@@ -127,7 +130,7 @@ python -m PyInstaller --noconfirm --onefile --windowed ^
   PYTHON_APP_BUILDER.py
 ```
 
-The resulting `PythonAppBuilder.exe` will be in `out/`.
+This is a **standalone folder build** (`--onedir`), not a single `.exe` — the app ships as `out/PythonAppBuilder/` (containing `PythonAppBuilder.exe` and an `_internal/` folder with its bundled runtime and assets). Distribute the whole folder. `user-data/` is created next to `PythonAppBuilder.exe` on first run, outside `_internal/`, so your settings and build history survive even if `_internal/` gets replaced by a future build.
 
 <br>
 
@@ -147,15 +150,16 @@ The gear icon opens a tabbed **Settings** window:
 
 ## 🗂️ Local Config Files
 
-Generated at runtime, per-machine, and **not tracked in git**:
+Generated at runtime, per-machine, and **not tracked in git**. Everything the app owns lives under **`user-data/`**, created next to the running script (or `.exe`) on first launch:
 
 | File | Purpose |
 |---|---|
-| `verification.txt` | Company / Author / Copyright / Trademark |
-| `shortcuts.txt` | Custom keyboard shortcuts |
-| `theme.txt` | Selected theme mode (`Light` / `Dark` / `System` / `Developer`) |
-| `customization.txt` | Default build preferences set from *Settings → Customize* |
-| `version_info.txt` | Temporary PyInstaller version resource file — written next to the script being converted, cleaned up after each build |
+| `user-data/verification.txt` | Company / Author / Copyright / Trademark |
+| `user-data/shortcuts.txt` | Custom keyboard shortcuts |
+| `user-data/theme.txt` | Selected theme mode (`Light` / `Dark` / `System` / `Developer`) |
+| `user-data/customization.txt` | Default build preferences set from *Settings → Customize* |
+| `user-data/db/builds.db` | SQLite log of every successful build (app name, output path, size, timestamp) |
+| `version_info.txt` | Temporary PyInstaller version resource file — written next to the *script being converted*, cleaned up after each build (not part of `user-data/`) |
 
 <br>
 

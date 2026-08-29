@@ -24,6 +24,8 @@ All source lives under `scripts/`:
 | `shortcuts.py` | `ShortcutManager` — editable keyboard shortcuts, persisted to `shortcuts.txt`. |
 | `theme.py` | `ThemeManager` — persists the Light/Dark/System/Developer theme choice to `theme.txt` and resolves `System` via the Windows registry (`AppsUseLightTheme`). |
 | `customization.py` | `CustomizationManager` — persists default build preferences (build type, console mode, shortcut/command checkboxes, open-folder-after-build, Start Menu path) to `customization.txt`, same flat `key=value` format as `shortcuts.py`. |
+| `user_data.py` | `UserDataPath()`/`DbPath()`/`EnsureUserDataDirs()` — the single source of truth for where per-machine state lives (`user-data/`, `user-data/db/`). Every other persistence module builds its file path from this. |
+| `build_history.py` | `BuildHistory` — SQLite log of every successful build (`user-data/db/builds.db`), recorded from `BuildCompletedWindow`. |
 | `assets_path.py` | Resolves paths into `Assets/` (handles dev vs. frozen/PyInstaller-bundled paths via `AssetPath` / `AssetsPath`). |
 
 ### Theming
@@ -46,7 +48,7 @@ All source lives under `scripts/`:
 
 **Splash screen:** `ShowSplashScreen()` shows a frameless themed window (icon, title, `LOADER.gif`, status text) immediately after the theme is resolved; `UpdateSplash(text)` updates the status line at each startup stage. `CloseSplash()` enforces a minimum visible duration (`self.SplashMinDurationMs`, currently 1400ms) via a local `QEventLoop` + `QTimer.singleShot` before closing — startup (settings load + file indexing) is fast enough that without this the splash would flash and disappear before being seen.
 
-**Persistence gotcha:** `theme.py`'s `THEME_FILE` must stay a bare relative path (`"theme.txt"`), matching `verification.txt`/`shortcuts.txt`. It was previously derived from `__file__`, which resolves into PyInstaller's temp extraction folder in a frozen `.exe` — that folder is wiped after every run, so the saved theme (and the first-run picker) would silently reset on every launch of the built exe. Don't reintroduce a `__file__`-based path for any new per-machine config file.
+**Persistence gotcha:** `user_data.py`'s `USER_DATA_DIR` must stay a bare relative path (`"user-data"`). It was previously per-file and derived from `__file__` (e.g. `theme.py`'s old `THEME_FILE`), which resolves into PyInstaller's `_MEIPASS` folder in a frozen `.exe` — in a `--onefile` build that's a temp folder wiped after every run, so the saved theme (and the first-run picker) would silently reset on every launch. A relative path instead resolves against the working directory, which Explorer sets to the `.exe`'s own folder — this also means `user-data/` lands next to `PythonAppBuilder.exe`, not inside `--onedir`'s `_internal/`, so it survives even if `_internal/` is replaced by a future build. Don't reintroduce a `__file__`-based path for any new per-machine config file.
 
 `Assets/` holds UI images/icons/gifs referenced via `assets_path.py` — this indirection matters because paths differ between running from source and running from a frozen `.exe` (PyInstaller `sys._MEIPASS`).
 
@@ -56,13 +58,17 @@ All source lives under `scripts/`:
 
 ## Local/runtime config (not tracked in git)
 
-- `verification.txt` — Company/Author/Copyright/Trademark, used as default PyInstaller version metadata.
-- `shortcuts.txt` — user's custom keyboard shortcut bindings.
-- `theme.txt` — selected theme mode (`Light` / `Dark` / `System` / `Developer`).
-- `customization.txt` — default build preferences from *Settings → Customize* (build type, console mode, shortcut/show-command checkboxes, open-folder-after-build, Start Menu path).
-- `version_info.txt` — temporary PyInstaller version resource, written next to the target script and deleted after each build.
+Everything the app persists about itself lives under `user-data/` (see `scripts/user_data.py` — `UserDataPath()`/`DbPath()`/`EnsureUserDataDirs()`), a plain relative path so it always resolves next to the running script or `.exe`, never into a PyInstaller temp/internal folder:
 
-Don't assume these files exist; the app prompts for `verification.txt` contents on first run.
+- `user-data/verification.txt` — Company/Author/Copyright/Trademark, used as default PyInstaller version metadata.
+- `user-data/shortcuts.txt` — user's custom keyboard shortcut bindings.
+- `user-data/theme.txt` — selected theme mode (`Light` / `Dark` / `System` / `Developer`).
+- `user-data/customization.txt` — default build preferences from *Settings → Customize* (build type, console mode, shortcut/show-command checkboxes, open-folder-after-build, Start Menu path).
+- `user-data/db/builds.db` — SQLite log of every successful build (`scripts/build_history.py`'s `BuildHistory`), recorded from `BuildCompletedWindow`.
+
+`version_info.txt` is the one exception — it's a temporary PyInstaller version resource written next to the *target script being converted* (not this app's own data) and deleted after each build.
+
+`ConvertPyToExe.__init__` calls `EnsureUserDataDirs()` before constructing anything that reads/writes these files. Don't assume they exist beyond that; the app prompts for `verification.txt` contents on first run.
 
 ## Build/dev commands
 
@@ -73,7 +79,7 @@ python PYTHON_APP_BUILDER.py
 
 Build the distributable exe (see `PythonAppBuilder.spec` for the maintained spec):
 ```bash
-python -m PyInstaller --noconfirm --onefile --windowed --name "PythonAppBuilder" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
+python -m PyInstaller --noconfirm --onedir --windowed --name "PythonAppBuilder" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
 ```
 
 `build/` and `out/` are PyInstaller artifacts — never commit them.

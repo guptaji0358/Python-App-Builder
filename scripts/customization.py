@@ -1,6 +1,8 @@
 import os
 
-CUSTOMIZATION_FILE = "customization.txt"
+from .user_data import UserDataPath
+
+CUSTOMIZATION_FILE = UserDataPath("customization.txt")
 
 DEFAULTS = {
     "DefaultBuildType": "OneFile",

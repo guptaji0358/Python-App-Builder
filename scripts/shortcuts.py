@@ -1,6 +1,8 @@
 import os
 
-SHORTCUTS_FILE = "shortcuts.txt"
+from .user_data import UserDataPath
+
+SHORTCUTS_FILE = UserDataPath("shortcuts.txt")
 
 DEFAULT_SHORTCUTS = {
     "AddAsset": "Ctrl+Shift+A",

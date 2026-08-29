@@ -1,12 +1,14 @@
 import os
 import winreg
 
+from .user_data import UserDataPath
+
 # Relative to the working directory (matches verification.txt / shortcuts.txt),
 # not derived from __file__ - inside a frozen .exe, __file__ resolves into
 # PyInstaller's temp extraction folder, which is wiped after every run and
 # would silently reset the saved theme (and re-trigger the first-run picker)
 # on every launch.
-THEME_FILE = "theme.txt"
+THEME_FILE = UserDataPath("theme.txt")
 
 MODES = ("Light", "Dark", "System", "Developer")
 

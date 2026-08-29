@@ -1,10 +1,7 @@
 __pycache__/
 *.pyc
-verification.txt
+user-data/
 version_info.txt
-shortcuts.txt
-theme.txt
-customization.txt
 build/
 out/
 *.spec

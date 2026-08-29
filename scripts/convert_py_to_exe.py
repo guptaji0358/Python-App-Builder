@@ -18,15 +18,21 @@ from .messages import Messages
 from .shortcuts import ShortcutManager, SHORTCUT_LABELS
 from .theme import ThemeManager
 from .customization import CustomizationManager
+from .user_data import UserDataPath, EnsureUserDataDirs
+from .build_history import BuildHistory
 
 APP_VERSION = "1.0.0.0"
 REPOSITORY_URL = "https://github.com/guptaji0358/Python-App-Builder"
+VERIFICATION_FILE = UserDataPath("verification.txt")
 
 class ConvertPyToExe():
 
     def __init__(self):
         super().__init__()
         ConvertPyToExeApp = QApplication(sys.argv)
+
+        EnsureUserDataDirs()
+        self.BuildHistory = BuildHistory()
 
         self.ThemeMode = ThemeManager.Get()
         Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
@@ -687,6 +693,15 @@ class ConvertPyToExe():
         QPixmap(AssetsPath.Checked)
 
         SizeMB = round(os.path.getsize(exepath) / (1024 * 1024),2)
+
+        self.BuildHistory.Record(
+            self.AppNameInput.text(),
+            getattr(self,"SelectedPythonFilePath",""),
+            exepath,
+            "OneFile" if self.OneFile.isChecked() else "OneDir",
+            "NoConsole" if self.NoConsole.isChecked() else "WithConsole",
+            SizeMB,
+        )
 
         Dialog = QDialog(self.MainWindow)
         Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
@@ -2154,7 +2169,7 @@ class ConvertPyToExe():
     def SaveVerificationSettings(self):
         try:
 
-            with open("verification.txt","w",encoding="utf-8") as File:
+            with open(VERIFICATION_FILE,"w",encoding="utf-8") as File:
                 File.write(f"CompanyName={self.CompanyNameInput.text()}\n")
                 File.write(f"AuthorName={self.AuthorInput.text()}\n")
                 File.write(f"Copyright={self.CopyrightInput.text()}\n")
@@ -2177,10 +2192,10 @@ class ConvertPyToExe():
         self.Trademark = ""
 
         try:
-            if not os.path.exists("verification.txt"):
+            if not os.path.exists(VERIFICATION_FILE):
                 return
 
-            with open("verification.txt","r",encoding="utf-8") as File:
+            with open(VERIFICATION_FILE,"r",encoding="utf-8") as File:
 
                 for Line in File:
                     if "=" not in Line:
@@ -2340,7 +2355,7 @@ class ConvertPyToExe():
             self.Trademark = TrademarkInput.text().strip()
 
             try:
-                with open("verification.txt","w",encoding="utf-8") as File:
+                with open(VERIFICATION_FILE,"w",encoding="utf-8") as File:
                     File.write(f"CompanyName={self.CompanyName}\n")
                     File.write(f"AuthorName={self.AuthorName}\n")
                     File.write(f"Copyright={self.Copyright}\n")
