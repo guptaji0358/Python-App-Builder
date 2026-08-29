@@ -16,12 +16,16 @@ from .assets_path import AssetsPath
 from .style import Style
 from .messages import Messages
 from .shortcuts import ShortcutManager, SHORTCUT_LABELS
+from .theme import ThemeManager
 
 class ConvertPyToExe():
 
     def __init__(self):
         super().__init__()
         ConvertPyToExeApp = QApplication(sys.argv)
+
+        self.ThemeMode = ThemeManager.Get()
+        Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
 
         self.LoadVerificationSettings()
 
@@ -1347,6 +1351,24 @@ class ConvertPyToExe():
             self.CreateStartMenuShortcut(ExePath)
             self.BuildCompletedWindow(exepath=ExePath)
 
+    def PreviewTheme(self,Mode):
+        Resolved = ThemeManager.Resolve(Mode)
+        Style.ApplyTheme(Resolved)
+        self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+        self.CurrentThemeLabel.setText(
+            f"Current mode: {Resolved}" + (" (via System)" if Mode == "System" else "")
+        )
+        self.CurrentThemeLabel.setStyleSheet(Style.LabelStyle)
+
+    def SaveThemeSettings(self):
+        for Mode,Radio in self.ThemeRadios.items():
+            if Radio.isChecked():
+                self.ThemeMode = Mode
+                break
+        ThemeManager.Set(self.ThemeMode)
+        Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
+        self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+
     def ShowSettingsWindow(self):
         Dialog = QDialog(self.MainWindow)
         Dialog.setWindowTitle("Settings")
@@ -1478,10 +1500,51 @@ class ConvertPyToExe():
         CustomizeLayout.addRow("",EditButtonLayout)
         CustomizeTab.setLayout(CustomizeLayout)
 
+        # Developer Tab (Theme)
+        DeveloperTab = QWidget()
+        DeveloperLayout = QVBoxLayout()
+
+        ThemeLabel = QLabel("App Theme")
+        ThemeLabel.setStyleSheet(Style.LabelStyle)
+        Style.TextGlow(ThemeLabel)
+
+        self.ThemeGroup = QButtonGroup()
+        self.ThemeRadios = {}
+
+        for Mode in ("Light","Dark","System"):
+            Radio = QRadioButton(Mode)
+            Radio.setStyleSheet(Style.RadioButtonStyle)
+            Radio.setCursor(Qt.PointingHandCursor)
+            if Mode == self.ThemeMode:
+                Radio.setChecked(True)
+            self.ThemeGroup.addButton(Radio)
+            self.ThemeRadios[Mode] = Radio
+            DeveloperLayout.addWidget(Radio)
+
+        self.CurrentThemeLabel = QLabel(f"Current mode: {ThemeManager.Resolve(self.ThemeMode)}"
+                                         + (" (via System)" if self.ThemeMode == "System" else ""))
+        self.CurrentThemeLabel.setStyleSheet(Style.LabelStyle)
+
+        for Mode,Radio in self.ThemeRadios.items():
+            Radio.toggled.connect(lambda Checked,M=Mode: self.PreviewTheme(M) if Checked else None)
+
+        ThemeHintLabel = QLabel("Restart the app after saving for the theme to apply everywhere.")
+        ThemeHintLabel.setStyleSheet(Style.LabelStyle)
+        ThemeHintLabel.setWordWrap(True)
+
+        DeveloperLayout.addSpacing(10)
+        DeveloperLayout.addWidget(self.CurrentThemeLabel)
+        DeveloperLayout.addSpacing(6)
+        DeveloperLayout.addWidget(ThemeHintLabel)
+        DeveloperLayout.addStretch()
+
+        DeveloperTab.setLayout(DeveloperLayout)
+
         # Tabs
         Tabs.addTab(VerifyTab,"Verify")
         Tabs.addTab(ShortcutsTab,"Shortcut")
         Tabs.addTab(CustomizeTab,"Customize")
+        Tabs.addTab(DeveloperTab,"Developer")
         Tabs.addTab(AboutTab,"About")
 
         # Buttons
@@ -1498,6 +1561,7 @@ class ConvertPyToExe():
         CloseButton.setStyleSheet(Style.SecondaryButtonStyle)
 
         SaveButton.clicked.connect(self.SaveVerificationSettings)
+        SaveButton.clicked.connect(self.SaveThemeSettings)
         CloseButton.clicked.connect(Dialog.accept)
 
         ButtonLayout.addStretch()

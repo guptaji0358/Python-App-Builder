@@ -3,6 +3,7 @@ __pycache__/
 verification.txt
 version_info.txt
 shortcuts.txt
+theme.txt
 build/
 out/
 *.spec

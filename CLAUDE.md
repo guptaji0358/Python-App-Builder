@@ -21,7 +21,14 @@ All source lives under `scripts/`:
 | `style.py` | Qt stylesheets (`Style` class) and visual effects — no logic. |
 | `messages.py` | Shared `QMessageBox` dialog helpers (`Messages` class). |
 | `shortcuts.py` | `ShortcutManager` — editable keyboard shortcuts, persisted to `shortcuts.txt`. |
+| `theme.py` | `ThemeManager` — persists the Light/Dark/System theme choice to `theme.txt` and resolves `System` via the Windows registry (`AppsUseLightTheme`). |
 | `assets_path.py` | Resolves paths into `Assets/` (handles dev vs. frozen/PyInstaller-bundled paths via `AssetPath` / `AssetsPath`). |
+
+### Theming
+
+`style.py` builds every stylesheet constant (`Style.MainWindowStyle`, `Style.InputStyle`, etc.) from a `PALETTES` dict keyed `"Dark"` / `"Light"` via `Style.ApplyTheme(mode)`, which rebinds the class attributes at runtime. `ConvertPyToExe.__init__` calls `Style.ApplyTheme(ThemeManager.Resolve(...))` before building any widgets. The Settings dialog's **Developer** tab lets the user pick Light/Dark/System, live-previews by re-applying `Style.ApplyTheme` + re-setting `self.MainWindow`'s stylesheet, and persists the choice via `ThemeManager.Set()` on Save.
+
+Only the top-level window stylesheet is guaranteed to repaint live — most child widgets (buttons, inputs, cards) had their stylesheet strings baked in at construction time and only pick up a new palette on the next app launch. When adding a new themed constant to `style.py`, add it inside `Style.ApplyTheme`, not as a bare class attribute, or it won't respond to theme changes at all.
 
 `Assets/` holds UI images/icons/gifs referenced via `assets_path.py` — this indirection matters because paths differ between running from source and running from a frozen `.exe` (PyInstaller `sys._MEIPASS`).
 
@@ -29,6 +36,7 @@ All source lives under `scripts/`:
 
 - `verification.txt` — Company/Author/Copyright/Trademark, used as default PyInstaller version metadata.
 - `shortcuts.txt` — user's custom keyboard shortcut bindings.
+- `theme.txt` — selected theme mode (`Light` / `Dark` / `System`).
 - `version_info.txt` — temporary PyInstaller version resource, written next to the target script and deleted after each build.
 
 Don't assume these files exist; the app prompts for `verification.txt` contents on first run.
