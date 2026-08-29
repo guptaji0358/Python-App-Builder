@@ -1418,6 +1418,8 @@ class ConvertPyToExe():
         self.Splash.move(ScreenGeometry.center() - self.Splash.rect().center())
 
         self.Splash.show()
+        self.SplashShownAt = time.time()
+        self.SplashMinDurationMs = 1400
         QApplication.processEvents()
 
     def UpdateSplash(self,Text):
@@ -1426,11 +1428,23 @@ class ConvertPyToExe():
             QApplication.processEvents()
 
     def CloseSplash(self):
-        if hasattr(self,"Splash"):
-            if hasattr(self,"SplashMovie"):
-                self.SplashMovie.stop()
-            self.Splash.close()
-            self.Splash.deleteLater()
+        if not hasattr(self,"Splash"):
+            return
+
+        # Startup (settings load + file indexing) is fast enough that the
+        # splash could otherwise flash and vanish before it's even seen -
+        # hold it on screen for a minimum duration, like a real splash.
+        Elapsed = (time.time() - self.SplashShownAt) * 1000
+        Remaining = int(self.SplashMinDurationMs - Elapsed)
+        if Remaining > 0:
+            Loop = QEventLoop()
+            QTimer.singleShot(Remaining,Loop.quit)
+            Loop.exec()
+
+        if hasattr(self,"SplashMovie"):
+            self.SplashMovie.stop()
+        self.Splash.close()
+        self.Splash.deleteLater()
 
     def BuildThemeSwatch(self,Mode):
         """A small VS-style mockup window (title bar / card / sample text)
