@@ -93,8 +93,8 @@ def Build():
         "CardStyle": """
                         QFrame
                                 {
-                                    background: rgba(255,255,255,10);
-                                    border:1px solid rgba(120,170,255,45);
+                                    background: rgba(255,255,255,8);
+                                    border:none;
                                     border-radius:18px;
                                 }
                     """,
@@ -641,5 +641,30 @@ def Build():
                                                                 color: rgba(234,240,255,85);
                                                                 border: 2px solid rgba(234,240,255,18);
                                                             }
+                            """,
+
+        "ToggleButtonStyle": """
+                                    QPushButton
+                                                {
+                                                    background: rgba(255,255,255,10);
+                                                    color: rgba(234,240,255,170);
+                                                    border: none;
+                                                    border-radius: 14px;
+                                                    padding: 8px 18px;
+                                                    font-size: 10pt;
+                                                    font-weight: 700;
+                                                }
+
+                                    QPushButton:hover
+                                                        {
+                                                            background: rgba(80,120,255,30);
+                                                            color: #EAF0FF;
+                                                        }
+
+                                    QPushButton:checked
+                                                        {
+                                                            background: rgba(80,120,255,90);
+                                                            color: white;
+                                                        }
                             """,
     }

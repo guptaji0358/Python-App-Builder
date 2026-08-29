@@ -1674,8 +1674,8 @@ class ConvertPyToExe():
         self.AnimateThemeChange(Apply)
 
     def SaveCustomizationDefaults(self):
-        IsOneFile = self.DefaultOneFileRadio.isChecked()
-        IsNoConsole = self.DefaultNoConsoleRadio.isChecked()
+        IsOneFile = self.DefaultOneFileToggle.isChecked()
+        IsNoConsole = self.DefaultNoConsoleToggle.isChecked()
         WantsShortcut = self.DefaultCreateShortcutCheckbox.isChecked()
         WantsShowCommand = self.DefaultShowCommandCheckbox.isChecked()
 
@@ -1873,23 +1873,24 @@ class ConvertPyToExe():
             Style.TextGlow(Label)
             return Label
 
-        def CustomizeRadioPair(Options,Checked):
+        def CustomizeTogglePair(Options,Checked):
             Group = QButtonGroup()
             Layout = QHBoxLayout()
-            Layout.setSpacing(20)
-            Radios = {}
+            Layout.setSpacing(6)
+            Toggles = {}
 
             for Key,Text in Options:
-                Radio = QRadioButton(Text)
-                Radio.setStyleSheet(Style.RadioButtonStyle)
-                Radio.setCursor(Qt.PointingHandCursor)
-                Radio.setChecked(Key == Checked)
-                Group.addButton(Radio)
-                Radios[Key] = Radio
-                Layout.addWidget(Radio)
+                Toggle = QPushButton(Text)
+                Toggle.setCheckable(True)
+                Toggle.setStyleSheet(Style.ToggleButtonStyle)
+                Toggle.setCursor(Qt.PointingHandCursor)
+                Toggle.setChecked(Key == Checked)
+                Group.addButton(Toggle)
+                Toggles[Key] = Toggle
+                Layout.addWidget(Toggle)
 
             Layout.addStretch()
-            return Group,Radios,Layout
+            return Group,Toggles,Layout
 
         # --- Start Menu Shortcut card ---
         StartMenuCard = QFrame()
@@ -1926,7 +1927,7 @@ class ConvertPyToExe():
         DefaultsCard.setStyleSheet(Style.CardStyle)
         DefaultsCardLayout = QVBoxLayout(DefaultsCard)
         DefaultsCardLayout.setContentsMargins(20,16,20,18)
-        DefaultsCardLayout.setSpacing(14)
+        DefaultsCardLayout.setSpacing(18)
 
         DefaultsCardLayout.addWidget(CustomizeSectionTitle("Defaults for New Builds"))
 
@@ -1938,22 +1939,22 @@ class ConvertPyToExe():
         BuildTypeRowLabel = QLabel("Build Type")
         BuildTypeRowLabel.setStyleSheet(Style.LabelStyle)
 
-        self.DefaultBuildTypeGroup,BuildTypeRadios,DefaultBuildTypeLayout = CustomizeRadioPair(
+        self.DefaultBuildTypeGroup,BuildTypeToggles,DefaultBuildTypeLayout = CustomizeTogglePair(
             [("OneFile","One File"),("OneDir","One Dir")],
             self.CustomizationManager.Get("DefaultBuildType"),
         )
-        self.DefaultOneFileRadio = BuildTypeRadios["OneFile"]
-        self.DefaultOneDirRadio = BuildTypeRadios["OneDir"]
+        self.DefaultOneFileToggle = BuildTypeToggles["OneFile"]
+        self.DefaultOneDirToggle = BuildTypeToggles["OneDir"]
 
         ConsoleModeRowLabel = QLabel("Console Mode")
         ConsoleModeRowLabel.setStyleSheet(Style.LabelStyle)
 
-        self.DefaultConsoleModeGroup,ConsoleModeRadios,DefaultConsoleModeLayout = CustomizeRadioPair(
+        self.DefaultConsoleModeGroup,ConsoleModeToggles,DefaultConsoleModeLayout = CustomizeTogglePair(
             [("NoConsole","No Console"),("WithConsole","Console")],
             self.CustomizationManager.Get("DefaultConsoleMode"),
         )
-        self.DefaultNoConsoleRadio = ConsoleModeRadios["NoConsole"]
-        self.DefaultWithConsoleRadio = ConsoleModeRadios["WithConsole"]
+        self.DefaultNoConsoleToggle = ConsoleModeToggles["NoConsole"]
+        self.DefaultWithConsoleToggle = ConsoleModeToggles["WithConsole"]
 
         DefaultsGrid.addWidget(BuildTypeRowLabel,0,0)
         DefaultsGrid.addLayout(DefaultBuildTypeLayout,0,1)
@@ -1961,11 +1962,6 @@ class ConvertPyToExe():
         DefaultsGrid.addLayout(DefaultConsoleModeLayout,1,1)
 
         DefaultsCardLayout.addLayout(DefaultsGrid)
-
-        CheckboxDivider = QFrame()
-        CheckboxDivider.setFrameShape(QFrame.HLine)
-        CheckboxDivider.setStyleSheet(f"background:{PALETTES.get(Style.Mode,PALETTES['Dark'])['CardBorder']};max-height:1px;border:none;")
-        DefaultsCardLayout.addWidget(CheckboxDivider)
 
         CheckboxColumnLayout = QVBoxLayout()
         CheckboxColumnLayout.setSpacing(10)
@@ -2055,7 +2051,7 @@ class ConvertPyToExe():
         Tabs.addTab(VerifyTab,"Verify")
         Tabs.addTab(ShortcutsTab,"Shortcut")
         Tabs.addTab(CustomizeTab,"Customize")
-        Tabs.addTab(DeveloperTab,"Developer")
+        Tabs.addTab(DeveloperTab,"Theme")
         Tabs.addTab(AboutTab,"About")
 
         # Buttons

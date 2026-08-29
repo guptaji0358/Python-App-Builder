@@ -44,7 +44,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>🔗</td><td><b>Start Menu shortcuts</b></td><td>Optionally create a shortcut for the built app, with a customizable install path</td></tr>
 <tr><td>🪪</td><td><b>Editable version metadata</b></td><td>Company, Author, Copyright, and Trademark are saved once and reused for every build</td></tr>
 <tr><td>⌨️</td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field and <kbd>Ctrl</kbd>+<kbd>.</kbd> to open Settings</td></tr>
-<tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Developer</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
+<tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Theme</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
 <tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
 <tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
 <tr><td>🧩</td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
@@ -54,7 +54,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 
 ## 🌗 Theming
 
-The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads — your choice is remembered from then on (`theme.txt`), so it's a one-time ask, not a repeat prompt. Change it later from **Settings → Developer**.
+The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads — your choice is remembered from then on (`theme.txt`), so it's a one-time ask, not a repeat prompt. Change it later from **Settings → Theme**.
 
 Each option shows a **VS-style live swatch** — a miniature preview of that theme's title bar, card, and text — right next to its radio button, so you see the look before you pick it:
 
@@ -140,7 +140,7 @@ The gear icon opens a tabbed **Settings** window:
 | **Verify** | Company Name, Author, Copyright, Trademark used as build metadata |
 | **Shortcut** | Rebind every keyboard shortcut in the app |
 | **Customize** | Start Menu shortcut path, plus default build type / console mode / shortcut / show-command / open-folder-after-build preferences that seed every new build |
-| **Developer** | Light / Dark / System / Developer theme switch, animated on change |
+| **Theme** | Light / Dark / System / Developer theme switch, animated on change |
 | **About** | App name, version, feature highlights, credits, and links to the GitHub repo / issue tracker |
 
 <br>

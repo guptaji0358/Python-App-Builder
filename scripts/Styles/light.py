@@ -31,9 +31,9 @@ def Build():
         "InputStyle": """
                             QLineEdit
                                         {
-                                            background-color: rgba(0,103,192,16);
+                                            background-color: rgba(43,92,138,16);
                                             color: #111318;
-                                            border: 1px solid rgba(0,103,192,60);
+                                            border: 1px solid rgba(43,92,138,60);
                                             border-radius: 20px;
                                             padding-left: 18px;
                                             padding-right: 18px;
@@ -41,20 +41,20 @@ def Build():
                                             padding-bottom: 10px;
                                             font-size: 11pt;
                                             font-weight: 700;
-                                            selection-background-color: rgba(0,103,192,180);
+                                            selection-background-color: rgba(43,92,138,180);
                                             selection-color: white;
                                         }
 
                             QLineEdit:hover
                                             {
-                                                background-color: rgba(0,103,192,22);
-                                                border: 1px solid rgba(0,103,192,140);
+                                                background-color: rgba(43,92,138,22);
+                                                border: 1px solid rgba(43,92,138,140);
                                             }
 
                             QLineEdit:focus
                                             {
-                                                background-color: rgba(0,103,192,30);
-                                                border: 2px solid rgb(0,103,192);
+                                                background-color: rgba(43,92,138,30);
+                                                border: 2px solid rgb(43,92,138);
                                                 color: #111318;
                                             }
 
@@ -78,7 +78,7 @@ def Build():
 
                                 QComboBox:hover
                                                 {
-                                                    border:1px solid rgb(0,103,192);
+                                                    border:1px solid rgb(43,92,138);
                                                 }
 
                                 QComboBox QAbstractItemView
@@ -87,7 +87,7 @@ def Build():
                                                                 color: #111318;
                                                                 border: 1px solid rgba(0,0,0,30);
                                                                 outline: none;
-                                                                selection-background-color: rgba(0,103,192,50);
+                                                                selection-background-color: rgba(43,92,138,50);
                                                                 selection-color: #111318;
                                                             }
                         """,
@@ -95,8 +95,8 @@ def Build():
         "CardStyle": """
                         QFrame
                                 {
-                                    background: rgba(0,0,0,6);
-                                    border:1px solid rgba(0,0,0,25);
+                                    background: rgba(0,0,0,5);
+                                    border:none;
                                     border-radius:18px;
                                 }
                     """,
@@ -104,7 +104,7 @@ def Build():
         "ButtonStyle": """
                             QPushButton
                                         {
-                                            background: rgb(0,103,192);
+                                            background: rgb(43,92,138);
                                             border:none;
                                             border-radius:20px;
                                             color:white;
@@ -115,13 +115,13 @@ def Build():
 
                             QPushButton:hover
                                                 {
-                                                    background: rgb(15,116,204);
-                                                    border:3px solid rgba(0,103,192,120);
+                                                    background: rgb(54,105,153);
+                                                    border:3px solid rgba(43,92,138,120);
                                                 }
 
                             QPushButton:pressed
                                                 {
-                                                    background: rgb(0,85,163);
+                                                    background: rgb(33,74,112);
                                                 }
                     """,
 
@@ -140,14 +140,14 @@ def Build():
                                     QPushButton:hover
                                                         {
                                                             background: rgba(0,0,0,12);
-                                                            border: 2px solid rgba(0,103,192,140);
+                                                            border: 2px solid rgba(43,92,138,140);
                                                             color: #111318;
                                                         }
 
                                     QPushButton:pressed
                                                             {
                                                                 background: rgba(0,0,0,18);
-                                                                border: 2px solid rgb(0,103,192);
+                                                                border: 2px solid rgb(43,92,138);
                                                                 padding-top: 13px;
                                                                 padding-bottom: 11px;
                                                             }
@@ -208,7 +208,7 @@ def Build():
                                             padding-bottom: 10px;
                                             font-size: 11pt;
                                             font-weight: 700;
-                                            selection-background-color: rgba(0,103,192,180);
+                                            selection-background-color: rgba(43,92,138,180);
                                             selection-color: white;
                                         }
 
@@ -253,8 +253,8 @@ def Build():
 
                                 QCheckBox::indicator:hover
                                                             {{
-                                                                background: rgba(0,103,192,20);
-                                                                border: 1px solid rgb(0,103,192);
+                                                                background: rgba(43,92,138,20);
+                                                                border: 1px solid rgb(43,92,138);
                                                             }}
 
                                 QCheckBox::indicator:pressed
@@ -265,15 +265,15 @@ def Build():
 
                                 QCheckBox::indicator:checked
                                                                 {{
-                                                                    background: rgb(0,103,192);
+                                                                    background: rgb(43,92,138);
                                                                     image: url({AssetsPath.Checked});
-                                                                    border: 1px solid rgb(0,103,192);
+                                                                    border: 1px solid rgb(43,92,138);
                                                                 }}
 
                                 QCheckBox::indicator:checked:hover
                                                                     {{
-                                                                        background: rgb(15,116,204);
-                                                                        border: 1px solid rgb(15,116,204);
+                                                                        background: rgb(54,105,153);
+                                                                        border: 1px solid rgb(54,105,153);
                                                                     }}
                         """,
 
@@ -334,7 +334,7 @@ def Build():
                                 QDialog
                                         {
                                             background: rgba(255,255,255,250);
-                                            border: 2px solid rgba(0,103,192,90);
+                                            border: 2px solid rgba(43,92,138,90);
                                             border-radius: 24px;
                                         }
 
@@ -349,7 +349,7 @@ def Build():
                                             {
                                                 background: rgba(0,0,0,10);
                                                 color: #111318;
-                                                border: 1px solid rgba(0,103,192,70);
+                                                border: 1px solid rgba(43,92,138,70);
                                                 border-radius: 16px;
                                                 padding: 12px;
                                             }
@@ -378,16 +378,16 @@ def Build():
 
                                 QTabBar::tab:hover
                                                     {
-                                                        background: rgba(0,103,192,14);
+                                                        background: rgba(43,92,138,14);
                                                         color: #111318;
                                                     }
 
                                 QTabBar::tab:selected
                                                         {
                                                             background: white;
-                                                            color: rgb(0,80,150);
+                                                            color: rgb(33,74,112);
                                                             border: 1px solid rgba(0,0,0,20);
-                                                            border-bottom: 3px solid rgb(0,103,192);
+                                                            border-bottom: 3px solid rgb(43,92,138);
                                                         }
                         """,
 
@@ -436,12 +436,12 @@ def Build():
 
                                 QScrollBar::handle:vertical:hover
                                                                     {
-                                                                        background: rgba(0,103,192,140);
+                                                                        background: rgba(43,92,138,140);
                                                                     }
 
                                 QScrollBar::handle:vertical:pressed
                                                                     {
-                                                                        background: rgb(0,103,192);
+                                                                        background: rgb(43,92,138);
                                                                     }
 
                                 QScrollBar::add-line:vertical
@@ -480,12 +480,12 @@ def Build():
 
                                 QScrollBar::handle:horizontal:hover
                                                                     {
-                                                                        background: rgba(0,103,192,140);
+                                                                        background: rgba(43,92,138,140);
                                                                     }
 
                                 QScrollBar::handle:horizontal:pressed
                                                                         {
-                                                                            background: rgb(0,103,192);
+                                                                            background: rgb(43,92,138);
                                                                         }
 
                                 QScrollBar::add-line:horizontal
@@ -520,8 +520,8 @@ def Build():
 
                                 QFrame:hover
                                             {
-                                                background: rgba(0,103,192,10);
-                                                border: 3px solid rgba(0,103,192,120);
+                                                background: rgba(43,92,138,10);
+                                                border: 3px solid rgba(43,92,138,120);
                                             }
 
                         """,
@@ -529,7 +529,7 @@ def Build():
         "AddAssetButtonStyle": """
                                     QPushButton
                                                 {
-                                                    background: rgb(0,103,192);
+                                                    background: rgb(43,92,138);
                                                     color: rgb(255,255,255);
                                                     border: none;
                                                     border-radius: 22px;
@@ -541,14 +541,14 @@ def Build():
 
                                     QPushButton:hover
                                                         {
-                                                            background: rgb(15,116,204);
+                                                            background: rgb(54,105,153);
                                                             color: rgb(255,255,255);
-                                                            border:2px solid rgba(0,103,192,140);
+                                                            border:2px solid rgba(43,92,138,140);
                                                         }
 
                                     QPushButton:pressed
                                                         {
-                                                            background: rgb(0,85,163);
+                                                            background: rgb(33,74,112);
                                                         }
                                     """,
 
@@ -576,13 +576,13 @@ def Build():
 
                                 QPushButton:hover
                                                     {
-                                                        background: rgba(0,103,192,18);
-                                                        border:2px solid rgba(0,103,192,120);
+                                                        background: rgba(43,92,138,18);
+                                                        border:2px solid rgba(43,92,138,120);
                                                     }
 
                                 QPushButton:pressed
                                                     {
-                                                        background: rgba(0,103,192,35);
+                                                        background: rgba(43,92,138,35);
                                                     }
                             """,
 
@@ -604,13 +604,13 @@ def Build():
 
                                 QPushButton:hover
                                                     {
-                                                        background: rgba(0,103,192,16);
-                                                        border:2px solid rgba(0,103,192,100);
+                                                        background: rgba(43,92,138,16);
+                                                        border:2px solid rgba(43,92,138,100);
                                                     }
 
                                 QPushButton:pressed
                                                     {
-                                                            background: rgba(0,103,192,30);
+                                                            background: rgba(43,92,138,30);
                                                     }
                             """,
 
@@ -629,14 +629,14 @@ def Build():
                                     QPushButton:hover
                                                         {
                                                             background: rgba(0,0,0,12);
-                                                            border: 2px solid rgba(0,103,192,140);
+                                                            border: 2px solid rgba(43,92,138,140);
                                                             color: #111318;
                                                         }
 
                                     QPushButton:pressed
                                                             {
                                                                 background: rgba(0,0,0,18);
-                                                                border: 2px solid rgb(0,103,192);
+                                                                border: 2px solid rgb(43,92,138);
                                                                 padding-top: 13px;
                                                                 padding-bottom: 11px;
                                                             }
@@ -647,5 +647,30 @@ def Build():
                                                                 color: rgba(17,19,24,90);
                                                                 border: 1px solid rgba(0,0,0,15);
                                                             }
+                            """,
+
+        "ToggleButtonStyle": """
+                                    QPushButton
+                                                {
+                                                    background: rgba(0,0,0,6);
+                                                    color: rgba(17,19,24,170);
+                                                    border: none;
+                                                    border-radius: 14px;
+                                                    padding: 8px 18px;
+                                                    font-size: 10pt;
+                                                    font-weight: 700;
+                                                }
+
+                                    QPushButton:hover
+                                                        {
+                                                            background: rgba(43,92,138,16);
+                                                            color: #111318;
+                                                        }
+
+                                    QPushButton:checked
+                                                        {
+                                                            background: rgb(43,92,138);
+                                                            color: white;
+                                                        }
                             """,
     }
