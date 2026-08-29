@@ -7,6 +7,7 @@ DEFAULT_SHORTCUTS = {
     "BrowseMultipleAssets": "Ctrl+Shift+B",
     "RemoveLastAsset": "Ctrl+Shift+R",
     "FocusNextInput": "Ctrl+Shift+Return",
+    "OpenSettings": "Ctrl+.",
 }
 
 SHORTCUT_LABELS = {
@@ -14,6 +15,7 @@ SHORTCUT_LABELS = {
     "BrowseMultipleAssets": "Browse Multiple Assets",
     "RemoveLastAsset": "Remove Last Asset",
     "FocusNextInput": "Move to Next Input",
+    "OpenSettings": "Open Settings",
 }
 
 

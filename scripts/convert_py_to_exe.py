@@ -132,6 +132,7 @@ class ConvertPyToExe():
                                         "BrowseMultipleAssets": self.BrowseMultipleAssets,
                                         "RemoveLastAsset": self.RemoveLastAssetRow,
                                         "FocusNextInput": self.FocusNextInput,
+                                        "OpenSettings": self.ShowSettingsWindow,
                                         }
         self.ShortcutObjects = {}
         self.ApplyShortcuts()
@@ -1673,13 +1674,26 @@ class ConvertPyToExe():
         self.AnimateThemeChange(Apply)
 
     def SaveCustomizationDefaults(self):
-        self.CustomizationManager.Set("DefaultBuildType","OneFile" if self.DefaultOneFileRadio.isChecked() else "OneDir")
-        self.CustomizationManager.Set("DefaultConsoleMode","NoConsole" if self.DefaultNoConsoleRadio.isChecked() else "WithConsole")
-        self.CustomizationManager.Set("DefaultCreateShortcut",self.DefaultCreateShortcutCheckbox.isChecked())
-        self.CustomizationManager.Set("DefaultShowCommand",self.DefaultShowCommandCheckbox.isChecked())
+        IsOneFile = self.DefaultOneFileRadio.isChecked()
+        IsNoConsole = self.DefaultNoConsoleRadio.isChecked()
+        WantsShortcut = self.DefaultCreateShortcutCheckbox.isChecked()
+        WantsShowCommand = self.DefaultShowCommandCheckbox.isChecked()
+
+        self.CustomizationManager.Set("DefaultBuildType","OneFile" if IsOneFile else "OneDir")
+        self.CustomizationManager.Set("DefaultConsoleMode","NoConsole" if IsNoConsole else "WithConsole")
+        self.CustomizationManager.Set("DefaultCreateShortcut",WantsShortcut)
+        self.CustomizationManager.Set("DefaultShowCommand",WantsShowCommand)
         self.CustomizationManager.Set("OpenFolderAfterBuild",self.OpenFolderAfterBuildCheckbox.isChecked())
         self.CustomizationManager.Save()
-        QMessageBox.information(self.MainWindow,"Defaults Saved","Your default build preferences have been saved.")
+
+        # Reflect the new defaults on the already-open main window immediately,
+        # not just on the next launch.
+        (self.OneFile if IsOneFile else self.OneDir).setChecked(True)
+        (self.NoConsole if IsNoConsole else self.WithConsole).setChecked(True)
+        self.CreateShortcutCheckbox.setChecked(WantsShortcut)
+        self.ShowPyInstallerCommandCheckbox.setChecked(WantsShowCommand)
+
+        QMessageBox.information(self.MainWindow,"Defaults Saved","Your default build preferences have been saved and applied.")
 
     def ShowSettingsWindow(self):
         Dialog = QDialog(self.MainWindow)

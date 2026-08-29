@@ -43,7 +43,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>🔍</td><td><b>Command preview</b></td><td>Inspect (and edit) the generated PyInstaller command before it runs</td></tr>
 <tr><td>🔗</td><td><b>Start Menu shortcuts</b></td><td>Optionally create a shortcut for the built app, with a customizable install path</td></tr>
 <tr><td>🪪</td><td><b>Editable version metadata</b></td><td>Company, Author, Copyright, and Trademark are saved once and reused for every build</td></tr>
-<tr><td>⌨️</td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field</td></tr>
+<tr><td>⌨️</td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field and <kbd>Ctrl</kbd>+<kbd>.</kbd> to open Settings</td></tr>
 <tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Developer</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
 <tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
 <tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
