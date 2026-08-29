@@ -13,7 +13,7 @@ import textwrap
 
 from .threads import FileIndexerThread, IconIndexerThread, BuildThread
 from .assets_path import AssetsPath
-from .style import Style
+from .style import Style, PALETTES
 from .messages import Messages
 from .shortcuts import ShortcutManager, SHORTCUT_LABELS
 from .theme import ThemeManager
@@ -101,7 +101,7 @@ class ConvertPyToExe():
         self.AssetsScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.MainWindow = QWidget()
-        self.MainWindow.setWindowOpacity(0.76)
+        self.MainWindow.setWindowOpacity(Style.WindowOpacity)
         self.MainWindow.setWindowFlags(Qt.Window)
         self.MainWindow.setWindowTitle("python App Builder")
         self.MainWindow.setStyleSheet(Style.MainWindowStyle)
@@ -1354,10 +1354,54 @@ class ConvertPyToExe():
             self.CreateStartMenuShortcut(ExePath)
             self.BuildCompletedWindow(exepath=ExePath)
 
+    def BuildThemeSwatch(self,Mode):
+        """A small VS-style mockup window (title bar / card / sample text)
+        previewing what Mode actually looks like, independent of the app's
+        currently-applied Style."""
+        Palette = PALETTES.get(ThemeManager.Resolve(Mode),PALETTES["Dark"])
+
+        Swatch = QFrame()
+        Swatch.setFixedSize(148,84)
+        Swatch.setStyleSheet(f"""
+                                QFrame {{
+                                            background:{Palette['WindowBg']};
+                                            border:1px solid {Palette['CardBorder']};
+                                            border-radius:10px;
+                                        }}
+                            """)
+
+        Layout = QVBoxLayout(Swatch)
+        Layout.setContentsMargins(9,9,9,9)
+        Layout.setSpacing(6)
+
+        TitleBar = QFrame()
+        TitleBar.setFixedHeight(12)
+        TitleBar.setStyleSheet("QFrame { background: rgba(0,170,255,190); border-radius:4px; }")
+
+        Card = QFrame()
+        Card.setFixedHeight(22)
+        Card.setStyleSheet(f"""
+                                QFrame {{
+                                            background:{Palette['CardBg']};
+                                            border:1px solid {Palette['CardBorder']};
+                                            border-radius:6px;
+                                        }}
+                            """)
+
+        SampleText = QLabel("Aa Bb")
+        SampleText.setStyleSheet(f"QLabel {{ color:{Palette['Text']}; font-size:9pt; font-weight:700; background:transparent; border:none; }}")
+
+        Layout.addWidget(TitleBar)
+        Layout.addWidget(Card)
+        Layout.addWidget(SampleText)
+        Layout.addStretch()
+
+        return Swatch
+
     def ShowFirstRunThemeDialog(self):
         Dialog = QDialog()
         Dialog.setWindowTitle("Choose Your Theme")
-        Dialog.resize(380,320)
+        Dialog.resize(460,420)
         Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
         Dialog.setStyleSheet(Style.DialogStyle)
 
@@ -1375,7 +1419,11 @@ class ConvertPyToExe():
         Layout.addWidget(TitleLabel)
         Layout.addSpacing(14)
 
-        for Mode in ("Light","Dark","System","Developer"):
+        OptionsGrid = QGridLayout()
+        OptionsGrid.setHorizontalSpacing(18)
+        OptionsGrid.setVerticalSpacing(14)
+
+        for Row,Mode in enumerate(("Light","Dark","System","Developer")):
             Radio = QRadioButton(Mode)
             Radio.setStyleSheet(Style.RadioButtonStyle)
             Radio.setCursor(Qt.PointingHandCursor)
@@ -1383,7 +1431,11 @@ class ConvertPyToExe():
                 Radio.setChecked(True)
             Group.addButton(Radio)
             Radios[Mode] = Radio
-            Layout.addWidget(Radio)
+
+            OptionsGrid.addWidget(self.BuildThemeSwatch(Mode),Row,0)
+            OptionsGrid.addWidget(Radio,Row,1,Qt.AlignVCenter)
+
+        Layout.addLayout(OptionsGrid)
 
         def PreviewSelection(Mode):
             Style.ApplyTheme(ThemeManager.Resolve(Mode))
@@ -1453,6 +1505,7 @@ class ConvertPyToExe():
         def Apply():
             Style.ApplyTheme(Resolved)
             self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+            self.MainWindow.setWindowOpacity(Style.WindowOpacity)
             self.CurrentThemeLabel.setText(
                 f"Current mode: {Resolved}" + (" (via System)" if Mode == "System" else "")
             )
@@ -1470,6 +1523,7 @@ class ConvertPyToExe():
         def Apply():
             Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
             self.MainWindow.setStyleSheet(Style.MainWindowStyle)
+            self.MainWindow.setWindowOpacity(Style.WindowOpacity)
 
         self.AnimateThemeChange(Apply)
 
@@ -1615,7 +1669,11 @@ class ConvertPyToExe():
         self.ThemeGroup = QButtonGroup()
         self.ThemeRadios = {}
 
-        for Mode in ("Light","Dark","System","Developer"):
+        ThemeGrid = QGridLayout()
+        ThemeGrid.setHorizontalSpacing(18)
+        ThemeGrid.setVerticalSpacing(12)
+
+        for Row,Mode in enumerate(("Light","Dark","System","Developer")):
             Radio = QRadioButton(Mode)
             Radio.setStyleSheet(Style.RadioButtonStyle)
             Radio.setCursor(Qt.PointingHandCursor)
@@ -1623,7 +1681,11 @@ class ConvertPyToExe():
                 Radio.setChecked(True)
             self.ThemeGroup.addButton(Radio)
             self.ThemeRadios[Mode] = Radio
-            DeveloperLayout.addWidget(Radio)
+
+            ThemeGrid.addWidget(self.BuildThemeSwatch(Mode),Row,0)
+            ThemeGrid.addWidget(Radio,Row,1,Qt.AlignVCenter)
+
+        DeveloperLayout.addLayout(ThemeGrid)
 
         self.CurrentThemeLabel = QLabel(f"Current mode: {ThemeManager.Resolve(self.ThemeMode)}"
                                          + (" (via System)" if self.ThemeMode == "System" else ""))

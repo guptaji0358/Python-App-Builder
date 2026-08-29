@@ -101,6 +101,10 @@ class Style:
         Palette = PALETTES.get(Mode, PALETTES["Dark"])
         cls.Mode = Mode if Mode in PALETTES else "Dark"
 
+        # Only the original "Developer" look uses a see-through window;
+        # Dark and Light render on a fully opaque, static background.
+        cls.WindowOpacity = 0.76 if cls.Mode == "Developer" else 1.0
+
         cls.MainWindowStyle = f"""
                                 QWidget
                                         {{

@@ -52,16 +52,18 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 
 ## 🌗 Theming
 
-The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads. Change it later from **Settings → Developer**:
+The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads — your choice is remembered from then on (`theme.txt`), so it's a one-time ask, not a repeat prompt. Change it later from **Settings → Developer**.
+
+Each option shows a **VS-style live swatch** — a miniature preview of that theme's title bar, card, and text — right next to its radio button, so you see the look before you pick it:
 
 | Mode | Behavior |
 |---|---|
-| ☀️ **Light** | A clean, bright palette |
-| 🌙 **Dark** | A refreshed slate-navy dark palette *(default)* |
+| ☀️ **Light** | A clean, bright, fully opaque palette |
+| 🌙 **Dark** | A refreshed slate-navy, fully opaque palette *(default)* |
 | 🖥️ **System** | Follows the Windows "Choose your mode" setting automatically |
-| 🧑‍💻 **Developer** | The app's original hand-tuned look, kept as its own selectable mode |
+| 🧑‍💻 **Developer** | The app's original hand-tuned look — translucent window included — kept as its own selectable mode |
 
-Every switch — in the picker or in Settings — **crossfades** the window instead of snapping instantly.
+Light and Dark render on a **static, solid background** (no see-through window); Developer keeps the original translucent glass look. Every switch — in the picker or in Settings — **crossfades** the window instead of snapping instantly.
 
 The panel shows the **currently resolved mode** live (e.g. `System → Dark`) and previews your selection instantly. Your choice is saved to `theme.txt` and restored on the next launch — restart the app after saving so every element repaints with the new palette.
 
