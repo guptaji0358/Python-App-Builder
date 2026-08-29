@@ -4,6 +4,7 @@ verification.txt
 version_info.txt
 shortcuts.txt
 theme.txt
+customization.txt
 build/
 out/
 *.spec

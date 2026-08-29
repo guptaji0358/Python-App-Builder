@@ -17,6 +17,10 @@ from .style import Style, PALETTES
 from .messages import Messages
 from .shortcuts import ShortcutManager, SHORTCUT_LABELS
 from .theme import ThemeManager
+from .customization import CustomizationManager
+
+APP_VERSION = "1.0.0.0"
+REPOSITORY_URL = "https://github.com/guptaji0358/Python-App-Builder"
 
 class ConvertPyToExe():
 
@@ -35,6 +39,10 @@ class ConvertPyToExe():
 
         self.UpdateSplash("Loading settings...")
         self.LoadVerificationSettings()
+
+        self.CustomizationManager = CustomizationManager()
+        if self.CustomizationManager.Get("StartMenuPath"):
+            AssetsPath.AddStartMenuShortcutPath = self.CustomizationManager.Get("StartMenuPath")
 
         if not self.IsRegistrationComplete():
             self.UpdateSplash("Waiting for registration...")
@@ -316,6 +324,12 @@ class ConvertPyToExe():
         self.CleanFolderCheckbox.setStyleSheet(Style.CheckBoxStyle)
         self.CleanFolderCheckbox.setCursor(Qt.PointingHandCursor)
         self.CleanFolderCheckbox.setToolTip("Only Applies to 'One Dir' Builds. Moves all support DLLs / files into a DLLs sub-folder next to the .exe, so the app folder stays clean while remaining standalone.")
+
+        # Seed from Settings > Customize defaults
+        (self.OneFile if self.CustomizationManager.Get("DefaultBuildType") == "OneFile" else self.OneDir).setChecked(True)
+        (self.NoConsole if self.CustomizationManager.Get("DefaultConsoleMode") == "NoConsole" else self.WithConsole).setChecked(True)
+        self.CreateShortcutCheckbox.setChecked(self.CustomizationManager.GetBool("DefaultCreateShortcut"))
+        self.ShowPyInstallerCommandCheckbox.setChecked(self.CustomizationManager.GetBool("DefaultShowCommand"))
 
         #Add Glow
         Style.Shadow(self.MenuButton)
@@ -722,6 +736,17 @@ class ConvertPyToExe():
         LaunchAppButton.setStyleSheet(Style.ButtonStyle)
         LaunchAppButton.clicked.connect(lambda:subprocess.Popen(exepath))
 
+        OpenFolderButton = QPushButton("Open Folder")
+        OpenFolderButton.setCursor(Qt.PointingHandCursor)
+        OpenFolderButton.setFixedWidth(130)
+        OpenFolderButton.setFixedHeight(50)
+        OpenFolderButton.setToolTip("Open Output Folder")
+        OpenFolderButton.setStyleSheet(Style.SecondaryButtonStyle)
+        OpenFolderButton.clicked.connect(lambda:os.startfile(os.path.dirname(exepath)))
+
+        if self.CustomizationManager.GetBool("OpenFolderAfterBuild"):
+            os.startfile(os.path.dirname(exepath))
+
         CloseButton = QPushButton()
         CloseButton.setText("Close")
         CloseButton.setCursor(Qt.PointingHandCursor)
@@ -734,6 +759,7 @@ class ConvertPyToExe():
 
         ButtonLayout.addStretch()
         ButtonLayout.addWidget(LaunchAppButton)
+        ButtonLayout.addWidget(OpenFolderButton)
         ButtonLayout.addWidget(CloseButton)
 
         MainLayout.addLayout(TopLayout)
@@ -1646,6 +1672,15 @@ class ConvertPyToExe():
 
         self.AnimateThemeChange(Apply)
 
+    def SaveCustomizationDefaults(self):
+        self.CustomizationManager.Set("DefaultBuildType","OneFile" if self.DefaultOneFileRadio.isChecked() else "OneDir")
+        self.CustomizationManager.Set("DefaultConsoleMode","NoConsole" if self.DefaultNoConsoleRadio.isChecked() else "WithConsole")
+        self.CustomizationManager.Set("DefaultCreateShortcut",self.DefaultCreateShortcutCheckbox.isChecked())
+        self.CustomizationManager.Set("DefaultShowCommand",self.DefaultShowCommandCheckbox.isChecked())
+        self.CustomizationManager.Set("OpenFolderAfterBuild",self.OpenFolderAfterBuildCheckbox.isChecked())
+        self.CustomizationManager.Save()
+        QMessageBox.information(self.MainWindow,"Defaults Saved","Your default build preferences have been saved.")
+
     def ShowSettingsWindow(self):
         Dialog = QDialog(self.MainWindow)
         Dialog.setWindowTitle("Settings")
@@ -1688,32 +1723,90 @@ class ConvertPyToExe():
         # About Tab
         AboutTab = QWidget()
         AboutLayout = QVBoxLayout()
+        AboutLayout.setSpacing(4)
+
+        AboutHeaderLayout = QHBoxLayout()
+        AboutHeaderLayout.setSpacing(14)
+
+        AboutIconLabel = QLabel()
+        AboutIconLabel.setPixmap(QIcon(AssetsPath.ApplicationIcon).pixmap(56,56))
+        AboutIconLabel.setStyleSheet("background:transparent;border:none;")
+
+        AboutTitleLayout = QVBoxLayout()
+        AboutTitleLayout.setSpacing(2)
 
         AppNameLabel = QLabel("Python App Builder")
-        VersionLabel = QLabel("Version : 1.0.0.0")
-        DescriptionLabel = QLabel("Description : Convert Python (.py) files into executable (.exe) applications.")
-        MotiveLabel = QLabel("Motive : Automate Python to EXE conversion without writing long PyInstaller commands manually.")
-        DeveloperLabel = QLabel("Developer : Robin Gupta")
+        AppNameLabel.setStyleSheet(Style.AppNameLabelStyle)
+        Style.TextGlow(AppNameLabel)
 
-        for Label in [AppNameLabel,VersionLabel,DescriptionLabel,MotiveLabel,DeveloperLabel]:
-            Label.setStyleSheet(Style.LabelStyle)
-            Style.TextGlow(Label)
+        VersionLabel = QLabel(f"Version {APP_VERSION}  •  Theme: {self.ThemeMode}")
+        VersionLabel.setStyleSheet(Style.LabelStyle)
 
-        AboutLayout.addSpacing(15)
-        AboutLayout.addWidget(AppNameLabel)
+        AboutTitleLayout.addWidget(AppNameLabel)
+        AboutTitleLayout.addWidget(VersionLabel)
+
+        AboutHeaderLayout.addWidget(AboutIconLabel)
+        AboutHeaderLayout.addLayout(AboutTitleLayout)
+        AboutHeaderLayout.addStretch()
+
+        DescriptionLabel = QLabel(
+            "Convert Python (.py) scripts into standalone Windows executables (.exe) using "
+            "PyInstaller — without writing a build command by hand."
+        )
+        DescriptionLabel.setWordWrap(True)
+        DescriptionLabel.setStyleSheet(Style.LabelStyle)
+
+        HighlightsCard = QFrame()
+        HighlightsCard.setStyleSheet(Style.CardStyle)
+        HighlightsLayout = QVBoxLayout(HighlightsCard)
+        HighlightsLayout.setContentsMargins(18,14,18,14)
+        HighlightsLayout.setSpacing(6)
+
+        HighlightsTitle = QLabel("Highlights")
+        HighlightsTitle.setStyleSheet(Style.LabelStyle)
+
+        HighlightsLayout.addWidget(HighlightsTitle)
+
+        for Highlight in (
+            "One-File / One-Dir builds with a live PyInstaller command preview",
+            "Custom icon, version metadata, and bundled assets",
+            "Editable keyboard shortcuts and Start Menu shortcut path",
+            "Light, Dark, System, and Developer themes with instant live switching",
+        ):
+            HighlightLabel = QLabel(f"•  {Highlight}")
+            HighlightLabel.setWordWrap(True)
+            HighlightLabel.setStyleSheet(Style.LabelStyle)
+            HighlightsLayout.addWidget(HighlightLabel)
+
+        CreditsLabel = QLabel("Developer: Robin Gupta  •  Assisted by Claude Code")
+        CreditsLabel.setStyleSheet(Style.LabelStyle)
+
+        LinksLayout = QHBoxLayout()
+        LinksLayout.addStretch()
+
+        GitHubButton = QPushButton("View on GitHub")
+        GitHubButton.setCursor(Qt.PointingHandCursor)
+        GitHubButton.setStyleSheet(Style.SecondaryButtonStyle)
+        GitHubButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(REPOSITORY_URL)))
+
+        ReportIssueButton = QPushButton("Report an Issue")
+        ReportIssueButton.setCursor(Qt.PointingHandCursor)
+        ReportIssueButton.setStyleSheet(Style.SecondaryButtonStyle)
+        ReportIssueButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(f"{REPOSITORY_URL}/issues")))
+
+        LinksLayout.addWidget(GitHubButton)
+        LinksLayout.addWidget(ReportIssueButton)
+
         AboutLayout.addSpacing(10)
-
-        AboutLayout.addWidget(VersionLabel)
+        AboutLayout.addLayout(AboutHeaderLayout)
         AboutLayout.addSpacing(10)
-
         AboutLayout.addWidget(DescriptionLabel)
-        AboutLayout.addSpacing(10)
-
-        AboutLayout.addWidget(MotiveLabel)
-        AboutLayout.addSpacing(10)
-
-        AboutLayout.addWidget(DeveloperLabel)
+        AboutLayout.addSpacing(12)
+        AboutLayout.addWidget(HighlightsCard)
+        AboutLayout.addSpacing(12)
+        AboutLayout.addWidget(CreditsLabel)
         AboutLayout.addStretch()
+        AboutLayout.addLayout(LinksLayout)
 
         AboutTab.setLayout(AboutLayout)
 
@@ -1756,6 +1849,7 @@ class ConvertPyToExe():
 
         # Customize Tab
         CustomizeTab = QWidget()
+        CustomizeOuterLayout = QVBoxLayout()
         CustomizeLayout = QFormLayout()
         EditButtonLayout = QHBoxLayout()
 
@@ -1775,7 +1869,85 @@ class ConvertPyToExe():
         EditButtonLayout.addStretch()
         EditButtonLayout.addWidget(EditButton)
         CustomizeLayout.addRow("",EditButtonLayout)
-        CustomizeTab.setLayout(CustomizeLayout)
+
+        DefaultsLabel = QLabel("Defaults for New Builds")
+        DefaultsLabel.setStyleSheet(Style.LabelStyle)
+        Style.TextGlow(DefaultsLabel)
+
+        DefaultBuildTypeLayout = QHBoxLayout()
+        self.DefaultBuildTypeGroup = QButtonGroup()
+
+        self.DefaultOneFileRadio = QRadioButton("One File")
+        self.DefaultOneFileRadio.setStyleSheet(Style.RadioButtonStyle)
+        self.DefaultOneFileRadio.setCursor(Qt.PointingHandCursor)
+
+        self.DefaultOneDirRadio = QRadioButton("One Dir")
+        self.DefaultOneDirRadio.setStyleSheet(Style.RadioButtonStyle)
+        self.DefaultOneDirRadio.setCursor(Qt.PointingHandCursor)
+
+        self.DefaultBuildTypeGroup.addButton(self.DefaultOneFileRadio)
+        self.DefaultBuildTypeGroup.addButton(self.DefaultOneDirRadio)
+        (self.DefaultOneFileRadio if self.CustomizationManager.Get("DefaultBuildType") == "OneFile" else self.DefaultOneDirRadio).setChecked(True)
+
+        DefaultBuildTypeLayout.addWidget(self.DefaultOneFileRadio)
+        DefaultBuildTypeLayout.addWidget(self.DefaultOneDirRadio)
+
+        DefaultConsoleModeLayout = QHBoxLayout()
+        self.DefaultConsoleModeGroup = QButtonGroup()
+
+        self.DefaultNoConsoleRadio = QRadioButton("No Console")
+        self.DefaultNoConsoleRadio.setStyleSheet(Style.RadioButtonStyle)
+        self.DefaultNoConsoleRadio.setCursor(Qt.PointingHandCursor)
+
+        self.DefaultWithConsoleRadio = QRadioButton("Console")
+        self.DefaultWithConsoleRadio.setStyleSheet(Style.RadioButtonStyle)
+        self.DefaultWithConsoleRadio.setCursor(Qt.PointingHandCursor)
+
+        self.DefaultConsoleModeGroup.addButton(self.DefaultNoConsoleRadio)
+        self.DefaultConsoleModeGroup.addButton(self.DefaultWithConsoleRadio)
+        (self.DefaultNoConsoleRadio if self.CustomizationManager.Get("DefaultConsoleMode") == "NoConsole" else self.DefaultWithConsoleRadio).setChecked(True)
+
+        DefaultConsoleModeLayout.addWidget(self.DefaultNoConsoleRadio)
+        DefaultConsoleModeLayout.addWidget(self.DefaultWithConsoleRadio)
+
+        self.DefaultCreateShortcutCheckbox = QCheckBox("Create Start Menu Shortcut")
+        self.DefaultCreateShortcutCheckbox.setStyleSheet(Style.CheckBoxStyle)
+        self.DefaultCreateShortcutCheckbox.setCursor(Qt.PointingHandCursor)
+        self.DefaultCreateShortcutCheckbox.setChecked(self.CustomizationManager.GetBool("DefaultCreateShortcut"))
+
+        self.DefaultShowCommandCheckbox = QCheckBox("Show PyInstaller Command")
+        self.DefaultShowCommandCheckbox.setStyleSheet(Style.CheckBoxStyle)
+        self.DefaultShowCommandCheckbox.setCursor(Qt.PointingHandCursor)
+        self.DefaultShowCommandCheckbox.setChecked(self.CustomizationManager.GetBool("DefaultShowCommand"))
+
+        self.OpenFolderAfterBuildCheckbox = QCheckBox("Open Output Folder After Build")
+        self.OpenFolderAfterBuildCheckbox.setStyleSheet(Style.CheckBoxStyle)
+        self.OpenFolderAfterBuildCheckbox.setCursor(Qt.PointingHandCursor)
+        self.OpenFolderAfterBuildCheckbox.setToolTip("Automatically opens the output folder in Explorer once a build finishes.")
+        self.OpenFolderAfterBuildCheckbox.setChecked(self.CustomizationManager.GetBool("OpenFolderAfterBuild"))
+
+        CustomizeLayout.addRow(DefaultsLabel)
+        CustomizeLayout.addRow("Build Type:",DefaultBuildTypeLayout)
+        CustomizeLayout.addRow("Console Mode:",DefaultConsoleModeLayout)
+        CustomizeLayout.addRow("",self.DefaultCreateShortcutCheckbox)
+        CustomizeLayout.addRow("",self.DefaultShowCommandCheckbox)
+        CustomizeLayout.addRow("",self.OpenFolderAfterBuildCheckbox)
+
+        SaveCustomizeButtonLayout = QHBoxLayout()
+        SaveCustomizeButtonLayout.addStretch()
+
+        SaveCustomizeButton = QPushButton("Save Defaults")
+        SaveCustomizeButton.setCursor(Qt.PointingHandCursor)
+        SaveCustomizeButton.setToolTip("Save Default Preferences")
+        SaveCustomizeButton.setStyleSheet(Style.ButtonStyle)
+        SaveCustomizeButton.clicked.connect(self.SaveCustomizationDefaults)
+
+        SaveCustomizeButtonLayout.addWidget(SaveCustomizeButton)
+
+        CustomizeOuterLayout.addLayout(CustomizeLayout)
+        CustomizeOuterLayout.addStretch()
+        CustomizeOuterLayout.addLayout(SaveCustomizeButtonLayout)
+        CustomizeTab.setLayout(CustomizeOuterLayout)
 
         # Developer Tab (Theme)
         DeveloperTab = QWidget()
@@ -1919,6 +2091,8 @@ class ConvertPyToExe():
 
         self.StartMenuPathInput.setText(Path)
         AssetsPath.AddStartMenuShortcutPath = Path
+        self.CustomizationManager.Set("StartMenuPath",Path)
+        self.CustomizationManager.Save()
         self.PathDialog.accept()
 
     def SaveVerificationSettings(self):

@@ -23,6 +23,7 @@ All source lives under `scripts/`:
 | `messages.py` | Shared `QMessageBox` dialog helpers (`Messages` class). |
 | `shortcuts.py` | `ShortcutManager` — editable keyboard shortcuts, persisted to `shortcuts.txt`. |
 | `theme.py` | `ThemeManager` — persists the Light/Dark/System/Developer theme choice to `theme.txt` and resolves `System` via the Windows registry (`AppsUseLightTheme`). |
+| `customization.py` | `CustomizationManager` — persists default build preferences (build type, console mode, shortcut/command checkboxes, open-folder-after-build, Start Menu path) to `customization.txt`, same flat `key=value` format as `shortcuts.py`. |
 | `assets_path.py` | Resolves paths into `Assets/` (handles dev vs. frozen/PyInstaller-bundled paths via `AssetPath` / `AssetsPath`). |
 
 ### Theming
@@ -47,13 +48,16 @@ All source lives under `scripts/`:
 
 `Assets/` holds UI images/icons/gifs referenced via `assets_path.py` — this indirection matters because paths differ between running from source and running from a frozen `.exe` (PyInstaller `sys._MEIPASS`).
 
+**Build defaults vs. Reset:** `CustomizationManager` values only seed the main window's build-type/console-mode radios and checkboxes once, at construction (`ConvertPyToExe.__init__`, right after they're created). `ResetTheApp()` deliberately clears all of them back to fully unchecked regardless of the saved defaults — that's existing, intentional behavior (a full reset, not "back to my defaults"); don't wire `CustomizationManager` into `ResetTheApp()`. The Customize tab's own `Default*` radios/checkboxes are a separate set of widgets that only edit the saved preference (via `SaveCustomizationDefaults`) and never reflect or affect the main window's current in-session choices.
+
 **Bundling gotcha:** `AssetsPath.ApplicationIcon` points at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) until a second `--add-data "APP_BUILDER_ICON.ico;."` was added to bundle it too (also present in `PythonAppBuilder.spec`'s `datas`). Any asset referenced outside `Assets/` needs the same treatment — bundled explicitly, not assumed to come along with `--icon` or any other single-purpose flag.
 
 ## Local/runtime config (not tracked in git)
 
 - `verification.txt` — Company/Author/Copyright/Trademark, used as default PyInstaller version metadata.
 - `shortcuts.txt` — user's custom keyboard shortcut bindings.
-- `theme.txt` — selected theme mode (`Light` / `Dark` / `System`).
+- `theme.txt` — selected theme mode (`Light` / `Dark` / `System` / `Developer`).
+- `customization.txt` — default build preferences from *Settings → Customize* (build type, console mode, shortcut/show-command checkboxes, open-folder-after-build, Start Menu path).
 - `version_info.txt` — temporary PyInstaller version resource, written next to the target script and deleted after each build.
 
 Don't assume these files exist; the app prompts for `verification.txt` contents on first run.

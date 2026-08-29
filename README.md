@@ -47,6 +47,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Developer</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
 <tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
 <tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
+<tr><td>🧩</td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
 </table>
 
 <br>
@@ -83,6 +84,7 @@ App Builder/
 │   ├── style.py               #   Themeable Qt stylesheets and visual effects
 │   ├── Styles/                 #   One file per theme (light.py / dark.py / developer.py) + registry
 │   ├── theme.py                #   Light/Dark/System/Developer theme persistence + OS detection
+│   ├── customization.py        #   Default build preferences (Settings > Customize), persisted to customization.txt
 │   ├── messages.py            #   Shared QMessageBox dialogs
 │   ├── shortcuts.py           #   Editable keyboard shortcut manager
 │   └── assets_path.py         #   Resolves paths to files in Assets/
@@ -137,9 +139,9 @@ The gear icon opens a tabbed **Settings** window:
 |---|---|
 | **Verify** | Company Name, Author, Copyright, Trademark used as build metadata |
 | **Shortcut** | Rebind every keyboard shortcut in the app |
-| **Customize** | Change where Start Menu shortcuts get created |
+| **Customize** | Start Menu shortcut path, plus default build type / console mode / shortcut / show-command / open-folder-after-build preferences that seed every new build |
 | **Developer** | Light / Dark / System / Developer theme switch, animated on change |
-| **About** | App name, version, description, and developer credit |
+| **About** | App name, version, feature highlights, credits, and links to the GitHub repo / issue tracker |
 
 <br>
 
@@ -151,7 +153,8 @@ Generated at runtime, per-machine, and **not tracked in git**:
 |---|---|
 | `verification.txt` | Company / Author / Copyright / Trademark |
 | `shortcuts.txt` | Custom keyboard shortcuts |
-| `theme.txt` | Selected theme mode (`Light` / `Dark` / `System`) |
+| `theme.txt` | Selected theme mode (`Light` / `Dark` / `System` / `Developer`) |
+| `customization.txt` | Default build preferences set from *Settings → Customize* |
 | `version_info.txt` | Temporary PyInstaller version resource file — written next to the script being converted, cleaned up after each build |
 
 <br>
