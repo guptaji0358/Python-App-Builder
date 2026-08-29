@@ -448,6 +448,40 @@ class Style:
                                                 border-radius: 16px;
                                                 padding: 12px;
                                             }}
+
+                                QTabWidget::pane
+                                                {{
+                                                    background: {Palette['CardBg']};
+                                                    border: 1px solid {Palette['CardBorder']};
+                                                    border-radius: 14px;
+                                                    top: -1px;
+                                                }}
+
+                                QTabBar::tab
+                                                {{
+                                                    background: {Palette['SecondaryBg']};
+                                                    color: {Palette['Text']};
+                                                    border: 1px solid {Palette['CardBorder']};
+                                                    border-bottom: none;
+                                                    border-top-left-radius: 10px;
+                                                    border-top-right-radius: 10px;
+                                                    padding: 8px 16px;
+                                                    margin-right: 2px;
+                                                    font-size: 10pt;
+                                                    font-weight: 700;
+                                                }}
+
+                                QTabBar::tab:hover
+                                                    {{
+                                                        background: rgba(0,170,255,{AccentHoverAlpha});
+                                                        color: white;
+                                                    }}
+
+                                QTabBar::tab:selected
+                                                        {{
+                                                            background: rgba(0,170,255,{AccentPressedAlpha});
+                                                            color: white;
+                                                        }}
                         """
 
         cls.ProgressBarStyle = """
