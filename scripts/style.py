@@ -2,93 +2,7 @@ from PySide6.QtWidgets import QGraphicsDropShadowEffect
 from PySide6.QtGui import QColor
 
 from .assets_path import AssetsPath
-
-PALETTES = {
-    # The app's original hand-tuned look, kept exactly as-is and offered as
-    # its own selectable mode for anyone who prefers the classic style.
-    "Developer": {
-        "WindowBg": "rgba(20,20,20,55)",
-        "Text": "white",
-        "SubText": "rgba(255,255,255,180)",
-        "CardBg": "rgba(255,255,255,15)",
-        "CardBorder": "rgba(255,255,255,40)",
-        "DialogBg": "rgba(15,20,30,240)",
-        "InputBg": "rgba(0,170,255,40)",
-        "InputHoverBg": "rgba(0,170,255,40)",
-        "InputFocusBg": "rgba(0,170,255,80)",
-        "InputDisabledBg": "rgba(100,100,100,40)",
-        "InputDisabledText": "rgba(255,255,255,120)",
-        "InputDisabledBorder": "rgba(255,255,255,30)",
-        "ComboBg": "rgba(30,41,59,180)",
-        "ComboBorder": "rgba(255,255,255,40)",
-        "SecondaryBg": "rgba(255,255,255,18)",
-        "SecondaryHoverBg": "rgba(255,255,255,28)",
-        "SecondaryPressedBg": "rgba(255,255,255,40)",
-        "SecondaryDisabledBg": "rgba(255,255,255,8)",
-        "SecondaryDisabledText": "rgba(255,255,255,90)",
-        "SecondaryDisabledBorder": "rgba(255,255,255,20)",
-        "ScrollTrack": "#20242C",
-        "ScrollHandle": "rgba(255,255,255,40)",
-        "TextEditBg": "rgba(0,0,0,120)",
-        "AssetCardBg": "rgba(255,255,255,12)",
-        "AssetCardBorder": "rgba(255,255,255,50)",
-    },
-    # A fresh, opaque slate-navy dark theme — distinct from "Developer".
-    "Dark": {
-        "WindowBg": "rgba(15,18,26,235)",
-        "Text": "#EAF0FF",
-        "SubText": "rgba(234,240,255,170)",
-        "CardBg": "rgba(255,255,255,10)",
-        "CardBorder": "rgba(120,170,255,45)",
-        "DialogBg": "rgba(12,16,26,250)",
-        "InputBg": "rgba(80,120,255,35)",
-        "InputHoverBg": "rgba(80,120,255,35)",
-        "InputFocusBg": "rgba(80,120,255,70)",
-        "InputDisabledBg": "rgba(90,90,100,40)",
-        "InputDisabledText": "rgba(234,240,255,110)",
-        "InputDisabledBorder": "rgba(234,240,255,25)",
-        "ComboBg": "rgba(24,30,46,200)",
-        "ComboBorder": "rgba(120,170,255,40)",
-        "SecondaryBg": "rgba(255,255,255,14)",
-        "SecondaryHoverBg": "rgba(255,255,255,22)",
-        "SecondaryPressedBg": "rgba(255,255,255,34)",
-        "SecondaryDisabledBg": "rgba(255,255,255,6)",
-        "SecondaryDisabledText": "rgba(234,240,255,85)",
-        "SecondaryDisabledBorder": "rgba(234,240,255,18)",
-        "ScrollTrack": "#161B26",
-        "ScrollHandle": "rgba(120,170,255,45)",
-        "TextEditBg": "rgba(6,8,14,150)",
-        "AssetCardBg": "rgba(255,255,255,8)",
-        "AssetCardBorder": "rgba(120,170,255,45)",
-    },
-    "Light": {
-        "WindowBg": "rgba(245,247,250,255)",
-        "Text": "#111318",
-        "SubText": "rgba(17,19,24,160)",
-        "CardBg": "rgba(0,0,0,6)",
-        "CardBorder": "rgba(0,0,0,25)",
-        "DialogBg": "rgba(255,255,255,250)",
-        "InputBg": "rgba(0,120,220,16)",
-        "InputHoverBg": "rgba(0,120,220,16)",
-        "InputFocusBg": "rgba(0,120,220,35)",
-        "InputDisabledBg": "rgba(0,0,0,15)",
-        "InputDisabledText": "rgba(17,19,24,120)",
-        "InputDisabledBorder": "rgba(0,0,0,25)",
-        "ComboBg": "rgba(255,255,255,220)",
-        "ComboBorder": "rgba(0,0,0,30)",
-        "SecondaryBg": "rgba(0,0,0,7)",
-        "SecondaryHoverBg": "rgba(0,0,0,12)",
-        "SecondaryPressedBg": "rgba(0,0,0,18)",
-        "SecondaryDisabledBg": "rgba(0,0,0,4)",
-        "SecondaryDisabledText": "rgba(17,19,24,90)",
-        "SecondaryDisabledBorder": "rgba(0,0,0,15)",
-        "ScrollTrack": "#E3E6EB",
-        "ScrollHandle": "rgba(0,0,0,35)",
-        "TextEditBg": "rgba(0,0,0,10)",
-        "AssetCardBg": "rgba(0,0,0,5)",
-        "AssetCardBorder": "rgba(0,0,0,30)",
-    },
-}
+from .Styles import PALETTES
 
 
 class Style:
@@ -101,18 +15,16 @@ class Style:
         Palette = PALETTES.get(Mode, PALETTES["Dark"])
         cls.Mode = Mode if Mode in PALETTES else "Dark"
 
-        # Only the original "Developer" look uses a see-through window;
-        # Dark and Light render on a fully opaque, static background.
-        cls.WindowOpacity = 0.76 if cls.Mode == "Developer" else 1.0
-
-        # The Light palette is bright, so white check/radio glyphs and
-        # low-alpha white overlays need swapping for higher-contrast ones.
-        IsLight = cls.Mode == "Light"
+        # Every per-theme knob (window opacity, accent strength, whether
+        # check/radio glyphs need a dark-safe variant) lives in the theme's
+        # own file under Styles/, not hardcoded here.
+        cls.WindowOpacity = Palette["WindowOpacity"]
+        IsLight = Palette["IsLight"]
         CheckedIcon = AssetsPath.CheckedOnLight if IsLight else AssetsPath.Checked
         UncheckedIcon = AssetsPath.UncheckedOnLight if IsLight else AssetsPath.Unchecked
-        AccentAlpha = 235 if IsLight else 40
-        AccentHoverAlpha = 235 if IsLight else 40
-        AccentPressedAlpha = 255 if IsLight else 80
+        AccentAlpha = Palette["AccentAlpha"]
+        AccentHoverAlpha = Palette["AccentHoverAlpha"]
+        AccentPressedAlpha = Palette["AccentPressedAlpha"]
 
         cls.MainWindowStyle = f"""
                                 QWidget

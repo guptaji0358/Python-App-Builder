@@ -80,7 +80,8 @@ App Builder/
 │   ├── convert_py_to_exe.py  #   Main window / app logic (ConvertPyToExe)
 │   ├── threads.py            #   Background QThreads (file indexing, icon indexing, build)
 │   ├── style.py               #   Themeable Qt stylesheets and visual effects
-│   ├── theme.py                #   Light/Dark/System theme persistence + OS detection
+│   ├── Styles/                 #   One file per theme (light.py / dark.py / developer.py) + registry
+│   ├── theme.py                #   Light/Dark/System/Developer theme persistence + OS detection
 │   ├── messages.py            #   Shared QMessageBox dialogs
 │   ├── shortcuts.py           #   Editable keyboard shortcut manager
 │   └── assets_path.py         #   Resolves paths to files in Assets/
