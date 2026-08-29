@@ -66,7 +66,7 @@ Each option shows a **VS-style live swatch** — a miniature preview of that the
 
 Light and Dark render on a **static, solid background** (no see-through window); Developer keeps the original translucent glass look. Every switch — in the picker or in Settings — **crossfades** the window instead of snapping instantly.
 
-The panel shows the **currently resolved mode** live (e.g. `System → Dark`) and previews your selection instantly. Your choice is saved to `theme.txt` and restored on the next launch — restart the app after saving so every element repaints with the new palette.
+The panel shows the **currently resolved mode** live (e.g. `System → Dark`) and previews your selection instantly — every button, input, card, and open dialog repaints immediately, no restart needed. Your choice is saved to `theme.txt` and restored on the next launch.
 
 <br>
 
@@ -158,7 +158,6 @@ Generated at runtime, per-machine, and **not tracked in git**:
 
 ## 🧭 Roadmap
 
-- [ ] Live, full-repaint theme switching (no restart required)
 - [ ] Recent-builds history panel
 - [ ] Per-project build presets
 

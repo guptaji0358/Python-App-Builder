@@ -1564,6 +1564,32 @@ class ConvertPyToExe():
         Dialog.setLayout(Layout)
         Dialog.exec()
 
+    def SnapshotStyle(self):
+        """Every current Style.* stylesheet string, keyed by attribute name."""
+        return {Name: Value for Name,Value in vars(Style).items() if isinstance(Value,str)}
+
+    def RethemeAllWidgets(self,OldSnapshot):
+        """Re-applies the now-current Style.* stylesheets to every live widget
+        under self.MainWindow (including open dialogs, since they're parented
+        to it) that was styled from the OLD snapshot - this is what makes a
+        theme switch repaint every button/input/card immediately instead of
+        only on the next launch."""
+        NewSnapshot = self.SnapshotStyle()
+
+        Widgets = self.MainWindow.findChildren(QWidget)
+        Widgets.append(self.MainWindow)
+
+        for Widget in Widgets:
+            Current = Widget.styleSheet()
+            if not Current:
+                continue
+            for Name,OldValue in OldSnapshot.items():
+                if Current == OldValue:
+                    NewValue = NewSnapshot.get(Name)
+                    if NewValue is not None and NewValue != Current:
+                        Widget.setStyleSheet(NewValue)
+                    break
+
     def AnimateThemeChange(self,ApplyFunction):
         """Crossfades self.MainWindow while ApplyFunction swaps the palette."""
         Effect = QGraphicsOpacityEffect(self.MainWindow)
@@ -1595,13 +1621,13 @@ class ConvertPyToExe():
         Resolved = ThemeManager.Resolve(Mode)
 
         def Apply():
+            OldSnapshot = self.SnapshotStyle()
             Style.ApplyTheme(Resolved)
-            self.MainWindow.setStyleSheet(Style.MainWindowStyle)
             self.MainWindow.setWindowOpacity(Style.WindowOpacity)
+            self.RethemeAllWidgets(OldSnapshot)
             self.CurrentThemeLabel.setText(
                 f"Current mode: {Resolved}" + (" (via System)" if Mode == "System" else "")
             )
-            self.CurrentThemeLabel.setStyleSheet(Style.LabelStyle)
 
         self.AnimateThemeChange(Apply)
 
@@ -1613,9 +1639,10 @@ class ConvertPyToExe():
         ThemeManager.Set(self.ThemeMode)
 
         def Apply():
+            OldSnapshot = self.SnapshotStyle()
             Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
-            self.MainWindow.setStyleSheet(Style.MainWindowStyle)
             self.MainWindow.setWindowOpacity(Style.WindowOpacity)
+            self.RethemeAllWidgets(OldSnapshot)
 
         self.AnimateThemeChange(Apply)
 
@@ -1786,14 +1813,8 @@ class ConvertPyToExe():
         for Mode,Radio in self.ThemeRadios.items():
             Radio.toggled.connect(lambda Checked,M=Mode: self.PreviewTheme(M) if Checked else None)
 
-        ThemeHintLabel = QLabel("Restart the app after saving for the theme to apply everywhere.")
-        ThemeHintLabel.setStyleSheet(Style.LabelStyle)
-        ThemeHintLabel.setWordWrap(True)
-
         DeveloperLayout.addSpacing(10)
         DeveloperLayout.addWidget(self.CurrentThemeLabel)
-        DeveloperLayout.addSpacing(6)
-        DeveloperLayout.addWidget(ThemeHintLabel)
         DeveloperLayout.addStretch()
 
         DeveloperTab.setLayout(DeveloperLayout)
