@@ -27,12 +27,17 @@ class ConvertPyToExe():
         self.ThemeMode = ThemeManager.Get()
         Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
 
+        self.ShowSplashScreen()
+
         if not ThemeManager.HasSavedChoice():
+            self.UpdateSplash("Choose your theme...")
             self.ShowFirstRunThemeDialog()
 
+        self.UpdateSplash("Loading settings...")
         self.LoadVerificationSettings()
 
         if not self.IsRegistrationComplete():
+            self.UpdateSplash("Waiting for registration...")
             if not self.ShowRegistrationDialog():
                 sys.exit(0)
 
@@ -41,6 +46,8 @@ class ConvertPyToExe():
         self.FileIndex = {}
         self.IconIndex = {}
 
+        self.UpdateSplash("Indexing Python files...")
+
         self.FileIndexer = FileIndexerThread()
         self.FileIndexer.IndexingFinished.connect(self.StoreFileIndex)
         self.FileIndexer.start()
@@ -48,6 +55,8 @@ class ConvertPyToExe():
         self.IconIndexer = IconIndexerThread()
         self.IconIndexer.IndexingFinished.connect(self.StoreIconIndex)
         self.IconIndexer.start()
+
+        self.UpdateSplash("Preparing interface...")
 
         self.SearchTimer = QTimer()
         self.SearchTimer.setSingleShot(True)
@@ -451,6 +460,7 @@ class ConvertPyToExe():
         MainVerticalLayout.addLayout(BottomSectionLayout)
 
         # MainVerticalLayout.addStretch()
+        self.CloseSplash()
         self.MainWindow.show()
         ConvertPyToExeApp.exec()
         
@@ -1353,6 +1363,74 @@ class ConvertPyToExe():
         if os.path.exists(ExePath):
             self.CreateStartMenuShortcut(ExePath)
             self.BuildCompletedWindow(exepath=ExePath)
+
+    def ShowSplashScreen(self):
+        Palette = PALETTES.get(Style.Mode,PALETTES["Dark"])
+
+        self.Splash = QWidget()
+        self.Splash.setObjectName("SplashScreen")
+        self.Splash.setWindowFlags(Qt.SplashScreen | Qt.FramelessWindowHint)
+        self.Splash.setAttribute(Qt.WA_TranslucentBackground)
+        self.Splash.setFixedSize(420,260)
+        self.Splash.setStyleSheet(f"""
+                                    QWidget#SplashScreen
+                                                        {{
+                                                            background: {Palette['DialogBg']};
+                                                            border: 2px solid rgba(0,170,255,140);
+                                                            border-radius: 24px;
+                                                        }}
+                                """)
+
+        Layout = QVBoxLayout(self.Splash)
+        Layout.setAlignment(Qt.AlignCenter)
+        Layout.setSpacing(10)
+
+        IconLabel = QLabel()
+        IconLabel.setPixmap(QIcon(AssetsPath.ApplicationIcon).pixmap(64,64))
+        IconLabel.setAlignment(Qt.AlignCenter)
+        IconLabel.setStyleSheet("background:transparent;border:none;")
+
+        TitleLabel = QLabel("Python App Builder")
+        TitleLabel.setStyleSheet(Style.AppNameLabelStyle)
+        TitleLabel.setAlignment(Qt.AlignCenter)
+        Style.TextGlow(TitleLabel)
+
+        LoaderLabel = QLabel()
+        LoaderLabel.setAlignment(Qt.AlignCenter)
+        LoaderLabel.setStyleSheet("background:transparent;border:none;")
+        self.SplashMovie = QMovie(AssetsPath.Loader)
+        self.SplashMovie.setScaledSize(QSize(36,36))
+        LoaderLabel.setMovie(self.SplashMovie)
+        self.SplashMovie.start()
+
+        self.SplashStatusLabel = QLabel("Starting up...")
+        self.SplashStatusLabel.setStyleSheet(Style.LabelStyle)
+        self.SplashStatusLabel.setAlignment(Qt.AlignCenter)
+
+        Layout.addStretch()
+        Layout.addWidget(IconLabel)
+        Layout.addWidget(TitleLabel)
+        Layout.addWidget(LoaderLabel)
+        Layout.addWidget(self.SplashStatusLabel)
+        Layout.addStretch()
+
+        ScreenGeometry = QApplication.primaryScreen().geometry()
+        self.Splash.move(ScreenGeometry.center() - self.Splash.rect().center())
+
+        self.Splash.show()
+        QApplication.processEvents()
+
+    def UpdateSplash(self,Text):
+        if hasattr(self,"SplashStatusLabel"):
+            self.SplashStatusLabel.setText(Text)
+            QApplication.processEvents()
+
+    def CloseSplash(self):
+        if hasattr(self,"Splash"):
+            if hasattr(self,"SplashMovie"):
+                self.SplashMovie.stop()
+            self.Splash.close()
+            self.Splash.deleteLater()
 
     def BuildThemeSwatch(self,Mode):
         """A small VS-style mockup window (title bar / card / sample text)
