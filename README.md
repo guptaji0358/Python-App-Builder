@@ -119,6 +119,7 @@ python -m PyInstaller --noconfirm --onefile --windowed ^
   --name "PythonAppBuilder" ^
   --icon "APP_BUILDER_ICON.ico" ^
   --add-data "Assets;Assets" ^
+  --add-data "APP_BUILDER_ICON.ico;." ^
   --distpath "out" ^
   --workpath "build" ^
   PYTHON_APP_BUILDER.py

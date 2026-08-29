@@ -45,6 +45,8 @@ Only the top-level window stylesheet is guaranteed to repaint live — most chil
 
 `Assets/` holds UI images/icons/gifs referenced via `assets_path.py` — this indirection matters because paths differ between running from source and running from a frozen `.exe` (PyInstaller `sys._MEIPASS`).
 
+**Bundling gotcha:** `AssetsPath.ApplicationIcon` points at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) until a second `--add-data "APP_BUILDER_ICON.ico;."` was added to bundle it too (also present in `PythonAppBuilder.spec`'s `datas`). Any asset referenced outside `Assets/` needs the same treatment — bundled explicitly, not assumed to come along with `--icon` or any other single-purpose flag.
+
 ## Local/runtime config (not tracked in git)
 
 - `verification.txt` — Company/Author/Copyright/Trademark, used as default PyInstaller version metadata.
@@ -63,7 +65,7 @@ python PYTHON_APP_BUILDER.py
 
 Build the distributable exe (see `PythonAppBuilder.spec` for the maintained spec):
 ```bash
-python -m PyInstaller --noconfirm --onefile --windowed --name "PythonAppBuilder" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
+python -m PyInstaller --noconfirm --onefile --windowed --name "PythonAppBuilder" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
 ```
 
 `build/` and `out/` are PyInstaller artifacts — never commit them.
