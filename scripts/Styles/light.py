@@ -17,7 +17,7 @@ PALETTE = {
 
 
 def Build():
-    return {
+    Result = {
         "WindowOpacity": 1.0,
 
         "MainWindowStyle": """
@@ -674,3 +674,5 @@ def Build():
                                                         }
                             """,
     }
+    Result["NormalInputStyle"] = Result["InputStyle"]
+    return Result

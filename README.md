@@ -55,7 +55,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 
 ## 🌗 Theming
 
-The very first time you launch the app, a **theme picker** appears so you can choose your look before anything else loads — your choice is remembered from then on (`theme.txt`), so it's a one-time ask, not a repeat prompt. Change it later from **Settings → Theme**.
+The very first time you launch the app, setup happens one screen at a time: a **registration screen** (Company/Author/Copyright/Trademark — or hit **Not Now** to skip it for later), then the splash greets you by name, then a **theme picker** with a **Skip** button if you'd rather just start. Every choice is remembered from then on, so this is a one-time flow, not a repeat prompt. Change your theme later from **Settings → Theme**.
 
 Each option shows a **VS-style live swatch** — a miniature preview of that theme's title bar, card, and text — right next to its radio button, so you see the look before you pick it:
 

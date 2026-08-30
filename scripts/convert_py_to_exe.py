@@ -40,21 +40,22 @@ class ConvertPyToExe():
 
         self.ShowSplashScreen()
 
+        self.UpdateSplash("Loading settings...")
+        self.LoadVerificationSettings()
+
+        if not self.IsRegistrationComplete():
+            self.UpdateSplash("Waiting for registration...")
+            self.ShowRegistrationDialog()
+
+        self.UpdateSplash(f"Welcome, {self.AuthorName}!" if self.AuthorName else "Welcome!")
+
         if not ThemeManager.HasSavedChoice():
             self.UpdateSplash("Choose your theme...")
             self.ShowFirstRunThemeDialog()
 
-        self.UpdateSplash("Loading settings...")
-        self.LoadVerificationSettings()
-
         self.CustomizationManager = CustomizationManager()
         if self.CustomizationManager.Get("StartMenuPath"):
             AssetsPath.AddStartMenuShortcutPath = self.CustomizationManager.Get("StartMenuPath")
-
-        if not self.IsRegistrationComplete():
-            self.UpdateSplash("Waiting for registration...")
-            if not self.ShowRegistrationDialog():
-                sys.exit(0)
 
         self.CurrentProgress = 10
 
@@ -1586,16 +1587,26 @@ class ConvertPyToExe():
         Layout.addLayout(OptionsGrid)
 
         def PreviewSelection(Mode):
+            OldSnapshot = self.SnapshotStyle()
             Style.ApplyTheme(ThemeManager.Resolve(Mode))
-            Dialog.setStyleSheet(Style.DialogStyle)
-            TitleLabel.setStyleSheet(Style.LabelStyle)
-            for R in Radios.values():
-                R.setStyleSheet(Style.RadioButtonStyle)
+            self.RethemeWidgetTree(Dialog,OldSnapshot)
 
         for Mode,Radio in Radios.items():
             Radio.toggled.connect(lambda Checked,M=Mode: PreviewSelection(M) if Checked else None)
 
         Layout.addStretch()
+
+        SkipButton = QPushButton("Skip")
+        SkipButton.setCursor(Qt.PointingHandCursor)
+        SkipButton.setStyleSheet(Style.SecondaryButtonStyle)
+
+        def Skip():
+            # Undo any live preview so the app doesn't launch in a theme
+            # the user never actually confirmed.
+            Style.ApplyTheme(ThemeManager.Resolve(self.ThemeMode))
+            Dialog.reject()
+
+        SkipButton.clicked.connect(Skip)
 
         ContinueButton = QPushButton("Continue")
         ContinueButton.setCursor(Qt.PointingHandCursor)
@@ -1613,6 +1624,7 @@ class ConvertPyToExe():
         ContinueButton.clicked.connect(Confirm)
 
         ButtonLayout = QHBoxLayout()
+        ButtonLayout.addWidget(SkipButton)
         ButtonLayout.addStretch()
         ButtonLayout.addWidget(ContinueButton)
         Layout.addLayout(ButtonLayout)
@@ -1624,16 +1636,16 @@ class ConvertPyToExe():
         """Every current Style.* stylesheet string, keyed by attribute name."""
         return {Name: Value for Name,Value in vars(Style).items() if isinstance(Value,str)}
 
-    def RethemeAllWidgets(self,OldSnapshot):
+    def RethemeWidgetTree(self,Root,OldSnapshot):
         """Re-applies the now-current Style.* stylesheets to every live widget
-        under self.MainWindow (including open dialogs, since they're parented
-        to it) that was styled from the OLD snapshot - this is what makes a
-        theme switch repaint every button/input/card immediately instead of
-        only on the next launch."""
+        under Root that was styled from the OLD snapshot - this is what makes
+        a theme switch repaint every button/input/card immediately instead of
+        only on the next launch. Works on any widget tree (the main window,
+        or a standalone dialog like the first-run theme picker)."""
         NewSnapshot = self.SnapshotStyle()
 
-        Widgets = self.MainWindow.findChildren(QWidget)
-        Widgets.append(self.MainWindow)
+        Widgets = Root.findChildren(QWidget)
+        Widgets.append(Root)
 
         for Widget in Widgets:
             Current = Widget.styleSheet()
@@ -1645,6 +1657,9 @@ class ConvertPyToExe():
                     if NewValue is not None and NewValue != Current:
                         Widget.setStyleSheet(NewValue)
                     break
+
+    def RethemeAllWidgets(self,OldSnapshot):
+        self.RethemeWidgetTree(self.MainWindow,OldSnapshot)
 
     def AnimateThemeChange(self,ApplyFunction):
         """Crossfades self.MainWindow while ApplyFunction swaps the palette."""
@@ -2338,12 +2353,19 @@ class ConvertPyToExe():
         MainLayout.addStretch()
 
         ButtonLayout = QHBoxLayout()
-        ButtonLayout.addStretch()
+
+        NotNowButton = QPushButton("Not Now")
+        NotNowButton.setCursor(Qt.PointingHandCursor)
+        NotNowButton.setToolTip("Skip for now - you can fill this in later from Settings > Verify")
+        NotNowButton.setStyleSheet(Style.SecondaryButtonStyle)
+        NotNowButton.clicked.connect(Dialog.accept)
 
         GetStartedButton = QPushButton("Get Started")
         GetStartedButton.setCursor(Qt.PointingHandCursor)
         GetStartedButton.setStyleSheet(Style.ButtonStyle)
 
+        ButtonLayout.addWidget(NotNowButton)
+        ButtonLayout.addStretch()
         ButtonLayout.addWidget(GetStartedButton)
         MainLayout.addLayout(ButtonLayout)
 
