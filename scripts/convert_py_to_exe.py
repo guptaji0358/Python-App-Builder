@@ -863,8 +863,15 @@ class ConvertPyToExe():
         self.SearchTimer.start(1000)
 
     def StoreFileIndex(self, Index):
-        self.FileIndex = Index
-        self.PyIndexDB.Save(Index)
+        # Merge rather than replace - a background rescan that (for whatever
+        # reason) misses a folder it previously covered shouldn't erase a
+        # file the user already has typed in and validated.
+        self.FileIndex = {**self.FileIndex, **Index}
+        self.PyIndexDB.Save(self.FileIndex)
+        # The field may have been red only because this scan hadn't finished
+        # yet - re-check whatever's currently typed now that the index grew.
+        if hasattr(self,"SelectPyFileInput"):
+            self.ValidatePythonFile()
 
     def ValidateIconFile(self):
         FileName = self.IconFileInput.text()
@@ -921,8 +928,10 @@ class ConvertPyToExe():
         self.IconIndexer.start()
 
     def StoreIconIndex(self, Index):
-        self.IconIndex = Index
-        self.IconIndexDB.Save(Index)
+        self.IconIndex = {**self.IconIndex, **Index}
+        self.IconIndexDB.Save(self.IconIndex)
+        if hasattr(self,"IconFileInput"):
+            self.ValidateIconFile()
 
     def BuildApplication(self):
 
