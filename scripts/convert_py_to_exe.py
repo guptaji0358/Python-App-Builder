@@ -24,7 +24,7 @@ from .file_index_db import PyFileIndexDatabase, IconFileIndexDatabase
 from .post_install import ShowThankYouFireworks
 
 APP_VERSION = "1.0.0.0"
-REPOSITORY_URL = "https://github.com/guptaji0358/Python-App-Builder"
+REPOSITORY_URL = "https://github.com/guptaji0358/Pywix"
 VERIFICATION_FILE = UserDataPath("verification.txt")
 
 class ConvertPyToExe():

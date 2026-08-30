@@ -11,6 +11,7 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?logo=qt&logoColor=white)](https://pypi.org/project/PySide6/)
 [![PyInstaller](https://img.shields.io/badge/powered%20by-PyInstaller-FFD43B?logo=python&logoColor=black)](https://pyinstaller.org/)
 [![Theme](https://img.shields.io/badge/theme-Light%20%7C%20Dark%20%7C%20System%20%7C%20Developer-8A2BE2)](#-theming)
+[![Release](https://img.shields.io/github/v/release/guptaji0358/Pywix?label=latest%20release&color=success)](https://github.com/guptaji0358/Pywix/releases/latest)
 [![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)](#-license)
 
 <sub>Author **Robin Gupta** · Assisted by **Claude Code**</sub>
@@ -24,7 +25,8 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 - [Features](#-features)
 - [Theming](#-theming)
 - [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
+- [Installing](#-installing)
+- [Getting Started (from source)](#-getting-started-from-source)
 - [Settings Reference](#-settings-reference)
 - [Local Config Files](#-local-config-files)
 - [Roadmap](#-roadmap)
@@ -49,6 +51,8 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 <tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
 <tr><td>🧩</td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
 <tr><td>🗃️</td><td><b>Build history</b></td><td>Every successful build is logged to a local SQLite database (<code>user-data/db/builds.db</code>)</td></tr>
+<tr><td>🧙</td><td><b>Custom installer</b></td><td>A branded, step-by-step Windows installer — no generic wizard chrome — with a live progress bar and shortcut creation</td></tr>
+<tr><td>🎆</td><td><b>First-launch celebration</b></td><td>A 6-second fireworks "thank you" screen plays the first time you launch the app right after installing it</td></tr>
 </table>
 
 <br>
@@ -75,7 +79,7 @@ The panel shows the **currently resolved mode** live (e.g. `System → Dark`) an
 ## 📁 Project Structure
 
 ```
-App Builder/
+Pywix/
 ├── PYTHON_APP_BUILDER.py     # Entry point — launches the app
 ├── Assets/                   # All .svg / .png / .gif / .ico UI assets
 │   └── APP_BUILDER_ICON.ico  #   App icon
@@ -91,13 +95,25 @@ App Builder/
 │   ├── file_index_db.py        #   Separate SQLite caches for the .py / .ico search indexes
 │   ├── messages.py            #   Shared QMessageBox dialogs
 │   ├── shortcuts.py           #   Editable keyboard shortcut manager
-│   └── assets_path.py         #   Resolves paths to files in Assets/
+│   ├── assets_path.py         #   Resolves paths to files in Assets/
+│   └── post_install.py        #   First-launch fireworks "thank you" overlay
+├── Installer/                 # Custom Windows installer (built separately from the app)
+│   ├── pyside_installer/      #   PySide6 installer wizard (installer_app.py, installer_style.py)
+│   └── PywixSetup.iss         #   Alternative Inno Setup script for the same install flow
 └── out/                       # Compiled .exe output (generated, not tracked)
 ```
 
 <br>
 
-## 🚀 Getting Started
+## 📥 Installing
+
+Grab the latest installer from the [Releases page](https://github.com/guptaji0358/Pywix/releases/latest) — download `PywixInstaller.exe` (or `PywixSetup.exe` if you prefer the Inno Setup build) and run it. The installer walks you through choosing an install folder, optional desktop/Start Menu shortcuts, and shows live progress while it copies files. On first launch afterward, you'll get a 6-second fireworks send-off.
+
+No Python installation is required to use the installed app — it's a fully self-contained build.
+
+<br>
+
+## 🚀 Getting Started (from source)
 
 ### Requirements
 

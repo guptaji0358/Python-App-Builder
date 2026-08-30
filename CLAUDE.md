@@ -28,6 +28,7 @@ All source lives under `scripts/`:
 | `build_history.py` | `BuildHistory` — SQLite log of every successful build (`user-data/db/builds.db`), recorded from `BuildCompletedWindow`. |
 | `file_index_db.py` | `PyFileIndexDatabase` / `IconFileIndexDatabase` — separate SQLite caches (`user-data/db/py_index.db`, `icon_index.db`) of the `.py` / `.ico` search indexes, so autocomplete has data instantly on startup instead of waiting on a fresh full-disk scan. |
 | `assets_path.py` | Resolves paths into `Assets/` (handles dev vs. frozen/PyInstaller-bundled paths via `AssetPath` / `AssetsPath`). |
+| `post_install.py` | `FireworksOverlay` / `ShowThankYouFireworks()` — a fullscreen, self-closing celebration screen. Shown once, only when the app is launched with `--post-install` (passed by the installer's finish step), never on a normal launch. |
 
 ### Theming
 
@@ -61,6 +62,15 @@ All source lives under `scripts/`:
 
 **Bundling gotcha (historical):** `AssetsPath.ApplicationIcon` used to point at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) unless a second `--add-data` bundled it too. The icon now lives in `Assets/APP_BUILDER_ICON.ico`, so it rides along with the existing `--add-data "Assets;Assets"` like every other asset — no separate bundling step needed. Any asset referenced outside `Assets/` would need that separate treatment again, so keep new assets inside `Assets/` unless there's a specific reason not to.
 
+### Installer
+
+`Installer/` holds two independent ways to package a distributable installer, both consuming the already-built `out/Pywix/` folder as their payload — neither builds the app itself:
+
+- `Installer/pyside_installer/` — a themed PySide6 `QWizard` (`installer_app.py` for the flow/pages, `installer_style.py` for the stylesheet). Copies `out/Pywix/` into the chosen install directory with a live progress bar, optionally creates desktop/Start Menu shortcuts via `win32com`, and on finish launches the installed app with `--post-install` so `post_install.py`'s fireworks screen plays. Packaged standalone with PyInstaller (`--onefile`, bundling `out/Pywix` as a `payload` data dir) into `PywixInstaller.exe`.
+- `Installer/PywixSetup.iss` — an equivalent Inno Setup script (native wizard chrome instead of a custom Qt one), compiled with `iscc` into `PywixSetup.exe`. Kept in sync with the PySide6 installer's app name / exe name / shortcut behavior, but is a separate implementation, not a shared one.
+
+Both installers are built *after* the main app, from `out/Pywix/` — rebuild the app first if its content changed, or the installer will bundle a stale payload. `Installer/Output/` and `Installer/build_installer_ui/` are PyInstaller/build artifacts (gitignored) — never commit them, and don't confuse the checked-in installer *source* under `Installer/pyside_installer/` with the built `.exe` output that lands next to it during local builds.
+
 ## Local/runtime config (not tracked in git)
 
 Everything the app persists about itself lives under `user-data/` (see `scripts/user_data.py` — `UserDataPath()`/`DbPath()`/`EnsureUserDataDirs()`), a plain relative path so it always resolves next to the running script or `.exe`, never into a PyInstaller temp/internal folder:
@@ -89,6 +99,19 @@ python -m PyInstaller --noconfirm --onedir --windowed --name "Pywix" --icon "Ass
 ```
 
 `build/` and `out/` are PyInstaller artifacts — never commit them.
+
+Build the PySide6 installer (after the app build above, so `out/Pywix/` exists):
+```bash
+cd Installer/pyside_installer
+python -m PyInstaller --noconfirm --onefile --windowed --name "PywixInstaller" --icon "..\..\Assets\APP_BUILDER_ICON.ico" --add-data "..\..\out\Pywix;payload" --distpath "..\Output" --workpath "..\build_installer_ui" installer_app.py
+```
+
+Or compile the Inno Setup alternative (requires Inno Setup's `iscc` on PATH):
+```bash
+iscc Installer\PywixSetup.iss
+```
+
+Both land in `Installer/Output/` — gitignored, and not the same thing as the checked-in installer source in `Installer/pyside_installer/`.
 
 ## Conventions
 
