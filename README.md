@@ -6,62 +6,68 @@
 
 <br><br>
 
-[![Platform](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows&logoColor=white)](#-requirements)
-[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#-requirements)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows&logoColor=white)](#requirements)
+[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#requirements)
 [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?logo=qt&logoColor=white)](https://pypi.org/project/PySide6/)
 [![PyInstaller](https://img.shields.io/badge/powered%20by-PyInstaller-FFD43B?logo=python&logoColor=black)](https://pyinstaller.org/)
-[![Theme](https://img.shields.io/badge/theme-Light%20%7C%20Dark%20%7C%20System%20%7C%20Developer-8A2BE2)](#-theming)
+[![Theme](https://img.shields.io/badge/theme-Light%20%7C%20Dark%20%7C%20System%20%7C%20Developer-8A2BE2)](#theming)
 [![Release](https://img.shields.io/github/v/release/guptaji0358/Pywix?label=latest%20release&color=success)](https://github.com/guptaji0358/Pywix/releases/latest)
-[![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)](#-license)
+[![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)](#license)
 
 <sub>Author **Robin Gupta** · Assisted by **Claude Code**</sub>
 
 <br>
 
-### [⬇️ Download the latest installer](https://github.com/guptaji0358/Pywix/releases/latest)
+### [<img src="GitHub-Assets/download.svg" width="18" align="absmiddle"> Download the latest installer](https://github.com/guptaji0358/Pywix/releases/latest)
 
 </div>
 
 <br>
 
-## 📚 Table of Contents
+<a name="toc"></a>
 
-- [Features](#-features)
-- [Theming](#-theming)
-- [Project Structure](#-project-structure)
-- [Installing](#-installing)
-- [Getting Started (from source)](#-getting-started-from-source)
-- [Settings Reference](#-settings-reference)
-- [Local Config Files](#-local-config-files)
-- [Roadmap](#-roadmap)
-- [License](#-license)
+## <img src="GitHub-Assets/toc.svg" width="18" align="absmiddle"> Table of Contents
+
+- [Features](#features)
+- [Theming](#theming)
+- [Project Structure](#project-structure)
+- [Installing](#installing)
+- [Getting Started (from source)](#getting-started)
+- [Settings Reference](#settings-reference)
+- [Local Config Files](#local-config-files)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 <br>
 
-## ✨ Features
+<a name="features"></a>
+
+## <img src="GitHub-Assets/features.svg" width="18" align="absmiddle"> Features
 
 <table>
-<tr><td>📦</td><td><b>One-File / One-Dir builds</b></td><td>Convert any <code>.py</code> file into a single <code>.exe</code> or a folder distribution</td></tr>
-<tr><td>🎨</td><td><b>Custom branding</b></td><td>Set a custom app icon, name, version, and description</td></tr>
-<tr><td>🖼️</td><td><b>Bundle extra assets</b></td><td>Images, fonts, audio, and other files get packed into the build and copied next to the output <code>.exe</code></td></tr>
-<tr><td>🖥️</td><td><b>Console / windowed toggle</b></td><td>Choose whether the built app shows a console window</td></tr>
-<tr><td>📊</td><td><b>Live build progress</b></td><td>Real-time output with cancel support mid-build</td></tr>
-<tr><td>🔍</td><td><b>Command preview</b></td><td>Inspect (and edit) the generated PyInstaller command before it runs</td></tr>
-<tr><td>🔗</td><td><b>Start Menu shortcuts</b></td><td>Optionally create a shortcut for the built app, with a customizable install path</td></tr>
-<tr><td>🪪</td><td><b>Editable version metadata</b></td><td>Company, Author, Copyright, and Trademark are saved once and reused for every build</td></tr>
-<tr><td>⌨️</td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field and <kbd>Ctrl</kbd>+<kbd>.</kbd> to open Settings</td></tr>
-<tr><td>🌗</td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Theme</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
-<tr><td>👋</td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
-<tr><td>💫</td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
-<tr><td>🧩</td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
-<tr><td>🗃️</td><td><b>Build history</b></td><td>Every successful build is logged to a local SQLite database (<code>user-data/db/builds.db</code>)</td></tr>
-<tr><td>🧙</td><td><b>Custom installer</b></td><td>A branded, step-by-step Windows installer — no generic wizard chrome — with a live progress bar and shortcut creation</td></tr>
-<tr><td>🎆</td><td><b>First-launch celebration</b></td><td>A 6-second fireworks "thank you" screen plays the first time you launch the app right after installing it</td></tr>
+<tr><td><img src="GitHub-Assets/package.svg" width="18" align="absmiddle"></td><td><b>One-File / One-Dir builds</b></td><td>Convert any <code>.py</code> file into a single <code>.exe</code> or a folder distribution</td></tr>
+<tr><td><img src="GitHub-Assets/palette.svg" width="18" align="absmiddle"></td><td><b>Custom branding</b></td><td>Set a custom app icon, name, version, and description</td></tr>
+<tr><td><img src="GitHub-Assets/image.svg" width="18" align="absmiddle"></td><td><b>Bundle extra assets</b></td><td>Images, fonts, audio, and other files get packed into the build and copied next to the output <code>.exe</code></td></tr>
+<tr><td><img src="GitHub-Assets/monitor.svg" width="18" align="absmiddle"></td><td><b>Console / windowed toggle</b></td><td>Choose whether the built app shows a console window</td></tr>
+<tr><td><img src="GitHub-Assets/chart.svg" width="18" align="absmiddle"></td><td><b>Live build progress</b></td><td>Real-time output with cancel support mid-build</td></tr>
+<tr><td><img src="GitHub-Assets/search.svg" width="18" align="absmiddle"></td><td><b>Command preview</b></td><td>Inspect (and edit) the generated PyInstaller command before it runs</td></tr>
+<tr><td><img src="GitHub-Assets/link.svg" width="18" align="absmiddle"></td><td><b>Start Menu shortcuts</b></td><td>Optionally create a shortcut for the built app, with a customizable install path</td></tr>
+<tr><td><img src="GitHub-Assets/idcard.svg" width="18" align="absmiddle"></td><td><b>Editable version metadata</b></td><td>Company, Author, Copyright, and Trademark are saved once and reused for every build</td></tr>
+<tr><td><img src="GitHub-Assets/keyboard.svg" width="18" align="absmiddle"></td><td><b>Editable keyboard shortcuts</b></td><td>Rebind shortcuts from <i>Settings → Shortcut</i>, including <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> to jump to the next input field and <kbd>Ctrl</kbd>+<kbd>.</kbd> to open Settings</td></tr>
+<tr><td><img src="GitHub-Assets/theming.svg" width="18" align="absmiddle"></td><td><b>Light / Dark / System / Developer theme</b></td><td>Switch appearance from <i>Settings → Theme</i>, with an animated crossfade on every change — auto-follows Windows when set to System</td></tr>
+<tr><td><img src="GitHub-Assets/onboarding.svg" width="18" align="absmiddle"></td><td><b>First-run theme picker</b></td><td>A one-time dialog lets you pick your theme the very first time the app launches</td></tr>
+<tr><td><img src="GitHub-Assets/loading.svg" width="18" align="absmiddle"></td><td><b>Splash screen</b></td><td>A themed splash window shows startup progress (settings, file indexing, interface) while the app loads</td></tr>
+<tr><td><img src="GitHub-Assets/puzzle.svg" width="18" align="absmiddle"></td><td><b>Build defaults</b></td><td>Pick a default build type, console mode, shortcut/command checkboxes, and auto-open-output-folder from <i>Settings → Customize</i> — applied on every fresh launch</td></tr>
+<tr><td><img src="GitHub-Assets/archive.svg" width="18" align="absmiddle"></td><td><b>Build history</b></td><td>Every successful build is logged to a local SQLite database (<code>user-data/db/builds.db</code>)</td></tr>
+<tr><td><img src="GitHub-Assets/wizard.svg" width="18" align="absmiddle"></td><td><b>Custom installer</b></td><td>A branded, step-by-step Windows installer — no generic wizard chrome — with a live progress bar and shortcut creation</td></tr>
+<tr><td><img src="GitHub-Assets/firework.svg" width="18" align="absmiddle"></td><td><b>First-launch celebration</b></td><td>A 6-second fireworks "thank you" screen plays the first time you launch the app right after installing it</td></tr>
 </table>
 
 <br>
 
-## 🌗 Theming
+<a name="theming"></a>
+
+## <img src="GitHub-Assets/theming.svg" width="18" align="absmiddle"> Theming
 
 The very first time you launch the app, setup happens one screen at a time: a **registration screen** (Company/Author/Copyright/Trademark — or hit **Not Now** to skip it for later), then the splash greets you by name, then a **theme picker** with a **Skip** button if you'd rather just start. Every choice is remembered from then on, so this is a one-time flow, not a repeat prompt. Change your theme later from **Settings → Theme**.
 
@@ -69,10 +75,10 @@ Each option shows a **VS-style live swatch** — a miniature preview of that the
 
 | Mode | Behavior |
 |---|---|
-| ☀️ **Light** | A clean, bright, fully opaque palette |
-| 🌙 **Dark** | A refreshed slate-navy, fully opaque palette *(default)* |
-| 🖥️ **System** | Follows the Windows "Choose your mode" setting automatically |
-| 🧑‍💻 **Developer** | The app's original hand-tuned look — translucent window included — kept as its own selectable mode |
+| <img src="GitHub-Assets/sun.svg" width="16" align="absmiddle"> **Light** | A clean, bright, fully opaque palette |
+| <img src="GitHub-Assets/moon.svg" width="16" align="absmiddle"> **Dark** | A refreshed slate-navy, fully opaque palette *(default)* |
+| <img src="GitHub-Assets/desktop.svg" width="16" align="absmiddle"> **System** | Follows the Windows "Choose your mode" setting automatically |
+| <img src="GitHub-Assets/code.svg" width="16" align="absmiddle"> **Developer** | The app's original hand-tuned look — translucent window included — kept as its own selectable mode |
 
 Light and Dark render on a **static, solid background** (no see-through window); Developer keeps the original translucent glass look. Every switch — in the picker or in Settings — **crossfades** the window instead of snapping instantly.
 
@@ -80,7 +86,9 @@ The panel shows the **currently resolved mode** live (e.g. `System → Dark`) an
 
 <br>
 
-## 📁 Project Structure
+<a name="project-structure"></a>
+
+## <img src="GitHub-Assets/folder.svg" width="18" align="absmiddle"> Project Structure
 
 <details>
 <summary><b>Click to expand the folder layout</b></summary>
@@ -114,7 +122,9 @@ Pywix/
 
 <br>
 
-## 📥 Installing
+<a name="installing"></a>
+
+## <img src="GitHub-Assets/download.svg" width="18" align="absmiddle"> Installing
 
 Grab the latest installer from the [Releases page](https://github.com/guptaji0358/Pywix/releases/latest) — download `PywixInstaller.exe` (or `PywixSetup.exe` if you prefer the Inno Setup build) and run it. The installer walks you through choosing an install folder, optional desktop/Start Menu shortcuts, and shows live progress while it copies files. On first launch afterward, you'll get a 6-second fireworks send-off.
 
@@ -122,7 +132,9 @@ No Python installation is required to use the installed app — it's a fully sel
 
 <br>
 
-## 🚀 Getting Started (from source)
+<a name="getting-started"></a>
+
+## <img src="GitHub-Assets/rocket.svg" width="18" align="absmiddle"> Getting Started (from source)
 
 ### Requirements
 
@@ -159,7 +171,9 @@ This is a **standalone folder build** (`--onedir`), not a single `.exe` — the 
 
 <br>
 
-## ⚙️ Settings Reference
+<a name="settings-reference"></a>
+
+## <img src="GitHub-Assets/settings.svg" width="18" align="absmiddle"> Settings Reference
 
 The gear icon opens a tabbed **Settings** window:
 
@@ -173,7 +187,9 @@ The gear icon opens a tabbed **Settings** window:
 
 <br>
 
-## 🗂️ Local Config Files
+<a name="local-config-files"></a>
+
+## <img src="GitHub-Assets/drawer.svg" width="18" align="absmiddle"> Local Config Files
 
 Generated at runtime, per-machine, and **not tracked in git**. Everything the app owns lives under **`user-data/`**, created next to the running script (or `.exe`) on first launch:
 
@@ -195,14 +211,18 @@ Generated at runtime, per-machine, and **not tracked in git**. Everything the ap
 
 <br>
 
-## 🧭 Roadmap
+<a name="roadmap"></a>
+
+## <img src="GitHub-Assets/compass.svg" width="18" align="absmiddle"> Roadmap
 
 - [ ] Recent-builds history panel
 - [ ] Per-project build presets
 
 <br>
 
-## 📄 License
+<a name="license"></a>
+
+## <img src="GitHub-Assets/document.svg" width="18" align="absmiddle"> License
 
 No license specified yet.
 
@@ -210,10 +230,10 @@ No license specified yet.
 
 <div align="center">
 
-If Pywix saved you a PyInstaller headache, consider giving it a ⭐
+If Pywix saved you a PyInstaller headache, consider giving it a <img src="GitHub-Assets/star.svg" width="16" align="absmiddle">
 
 **Author:** Robin Gupta · **Assisted by:** Claude Code
 
-[⬆ Back to top](#readme-top)
+[<img src="GitHub-Assets/arrow-up.svg" width="14" align="absmiddle"> Back to top](#readme-top)
 
 </div>
