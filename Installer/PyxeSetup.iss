@@ -1,12 +1,12 @@
-; Python App Builder - custom Inno Setup installer
-; Build the app first (see CLAUDE.md's PyInstaller command -> produces out/PythonAppBuilder/),
-; then compile this script with Inno Setup (iscc PythonAppBuilderSetup.iss).
+; Pyxe - custom Inno Setup installer
+; Build the app first (see CLAUDE.md's PyInstaller command -> produces out/Pyxe/),
+; then compile this script with Inno Setup (iscc PyxeSetup.iss).
 
-#define MyAppName "Python App Builder"
+#define MyAppName "Pyxe"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Robin Gupta"
-#define MyAppExeName "PythonAppBuilder.exe"
-#define MyAppSourceDir "..\out\PythonAppBuilder"
+#define MyAppExeName "Pyxe.exe"
+#define MyAppSourceDir "..\out\Pyxe"
 
 [Setup]
 AppId={{B7B1D9B0-7D2E-4A9F-9C1E-7B2B7B1D9B01}
@@ -17,7 +17,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=Output
-OutputBaseFilename=PythonAppBuilderSetup
+OutputBaseFilename=PyxeSetup
 Compression=lzma2
 SolidCompression=yes
 SetupIconFile=..\APP_BUILDER_ICON.ico
