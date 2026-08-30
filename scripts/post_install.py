@@ -55,7 +55,7 @@ class FireworksOverlay(QWidget):
     after the app's first post-install launch. Auto-closes itself after a
     fixed duration - purely decorative, holds no app state."""
 
-    def __init__(self, DurationMs=6000, Message="Thank you for installing Pyxe!"):
+    def __init__(self, DurationMs=6000, Message="Thank you for installing Pywix!"):
         super().__init__(None)
         self.Message = Message
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)

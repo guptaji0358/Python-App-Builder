@@ -1,9 +1,9 @@
-"""Custom PySide6-based installer UI for Pyxe.
+"""Custom PySide6-based installer UI for Pywix.
 
 Replaces Inno Setup's native wizard chrome with a themed Qt wizard that
 mirrors the target app's own look: a step sidebar, gradient accents, and a
 live-progress install page. It copies the already-built app payload
-(out/Pyxe when run from source, or the bundled 'payload' folder
+(out/Pywix when run from source, or the bundled 'payload' folder
 when frozen by PyInstaller) into the chosen install directory, optionally
 creates shortcuts, then launches the installed app with --post-install so
 the app's own fireworks "thank you" screen (scripts/post_install.py) plays.
@@ -23,8 +23,8 @@ from PySide6.QtGui import QIcon
 
 from installer_style import WizardStyle
 
-APP_DISPLAY_NAME = "Pyxe"
-APP_EXE_NAME = "Pyxe.exe"
+APP_DISPLAY_NAME = "Pywix"
+APP_EXE_NAME = "Pywix.exe"
 
 STEP_NAMES = ["Welcome", "Location", "Options", "Install", "Finish"]
 
@@ -38,7 +38,7 @@ def BaseDir():
 def PayloadDir():
     if getattr(sys, "frozen", False):
         return os.path.join(sys._MEIPASS, "payload")
-    return os.path.join(BaseDir(), "out", "Pyxe")
+    return os.path.join(BaseDir(), "out", "Pywix")
 
 
 def AppIconPath():

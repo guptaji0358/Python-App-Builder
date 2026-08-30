@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project
 
-Pyxe — a PySide6 desktop app that wraps PyInstaller in a GUI, letting users convert `.py` scripts into Windows `.exe` files without hand-writing PyInstaller commands.
+Pywix — a PySide6 desktop app that wraps PyInstaller in a GUI, letting users convert `.py` scripts into Windows `.exe` files without hand-writing PyInstaller commands.
 
 - **Entry point:** [PYTHON_APP_BUILDER.py](PYTHON_APP_BUILDER.py) — just instantiates `ConvertPyToExe()` from `scripts/convert_py_to_exe.py`.
 - **Platform:** Windows only (uses `pywin32` for Start Menu shortcuts, builds `.exe` output).
@@ -53,13 +53,13 @@ All source lives under `scripts/`:
 
 **Splash screen:** `ShowSplashScreen()` shows a frameless themed window (icon, title, `LOADER.gif`, status text) immediately after the theme is resolved; `UpdateSplash(text)` updates the status line at each startup stage. `CloseSplash()` enforces a minimum visible duration (`self.SplashMinDurationMs`, currently 1400ms) via a local `QEventLoop` + `QTimer.singleShot` before closing — startup (settings load + file indexing) is fast enough that without this the splash would flash and disappear before being seen.
 
-**Persistence gotcha:** `user_data.py`'s `USER_DATA_DIR` must stay a bare relative path (`"user-data"`). It was previously per-file and derived from `__file__` (e.g. `theme.py`'s old `THEME_FILE`), which resolves into PyInstaller's `_MEIPASS` folder in a frozen `.exe` — in a `--onefile` build that's a temp folder wiped after every run, so the saved theme (and the first-run picker) would silently reset on every launch. A relative path instead resolves against the working directory, which Explorer sets to the `.exe`'s own folder — this also means `user-data/` lands next to `Pyxe.exe`, not inside `--onedir`'s `_internal/`, so it survives even if `_internal/` is replaced by a future build. Don't reintroduce a `__file__`-based path for any new per-machine config file.
+**Persistence gotcha:** `user_data.py`'s `USER_DATA_DIR` must stay a bare relative path (`"user-data"`). It was previously per-file and derived from `__file__` (e.g. `theme.py`'s old `THEME_FILE`), which resolves into PyInstaller's `_MEIPASS` folder in a frozen `.exe` — in a `--onefile` build that's a temp folder wiped after every run, so the saved theme (and the first-run picker) would silently reset on every launch. A relative path instead resolves against the working directory, which Explorer sets to the `.exe`'s own folder — this also means `user-data/` lands next to `Pywix.exe`, not inside `--onedir`'s `_internal/`, so it survives even if `_internal/` is replaced by a future build. Don't reintroduce a `__file__`-based path for any new per-machine config file.
 
 `Assets/` holds UI images/icons/gifs referenced via `assets_path.py` — this indirection matters because paths differ between running from source and running from a frozen `.exe` (PyInstaller `sys._MEIPASS`).
 
 **Build defaults vs. Reset:** `CustomizationManager` values only seed the main window's build-type/console-mode radios and checkboxes once, at construction (`ConvertPyToExe.__init__`, right after they're created). `ResetTheApp()` deliberately clears all of them back to fully unchecked regardless of the saved defaults — that's existing, intentional behavior (a full reset, not "back to my defaults"); don't wire `CustomizationManager` into `ResetTheApp()`. The Customize tab's own `Default*` radios/checkboxes are a separate set of widgets that only edit the saved preference (via `SaveCustomizationDefaults`) and never reflect or affect the main window's current in-session choices.
 
-**Bundling gotcha:** `AssetsPath.ApplicationIcon` points at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) until a second `--add-data "APP_BUILDER_ICON.ico;."` was added to bundle it too (also present in `Pyxe.spec`'s `datas`). Any asset referenced outside `Assets/` needs the same treatment — bundled explicitly, not assumed to come along with `--icon` or any other single-purpose flag.
+**Bundling gotcha:** `AssetsPath.ApplicationIcon` points at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) until a second `--add-data "APP_BUILDER_ICON.ico;."` was added to bundle it too (also present in `Pywix.spec`'s `datas`). Any asset referenced outside `Assets/` needs the same treatment — bundled explicitly, not assumed to come along with `--icon` or any other single-purpose flag.
 
 ## Local/runtime config (not tracked in git)
 
@@ -83,9 +83,9 @@ Run from source:
 python PYTHON_APP_BUILDER.py
 ```
 
-Build the distributable exe (see `Pyxe.spec` for the maintained spec):
+Build the distributable exe (see `Pywix.spec` for the maintained spec):
 ```bash
-python -m PyInstaller --noconfirm --onedir --windowed --name "Pyxe" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
+python -m PyInstaller --noconfirm --onedir --windowed --name "Pywix" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
 ```
 
 `build/` and `out/` are PyInstaller artifacts — never commit them.

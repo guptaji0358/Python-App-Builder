@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛠️ Pyxe
+# 🛠️ Pywix
 
 **Convert Python scripts into standalone Windows executables — without touching a terminal.**
 
@@ -122,7 +122,7 @@ On first run you'll be asked to fill in **Company Name, Author, Copyright, and T
 
 ```bash
 python -m PyInstaller --noconfirm --onedir --windowed ^
-  --name "Pyxe" ^
+  --name "Pywix" ^
   --icon "APP_BUILDER_ICON.ico" ^
   --add-data "Assets;Assets" ^
   --add-data "APP_BUILDER_ICON.ico;." ^
@@ -131,7 +131,7 @@ python -m PyInstaller --noconfirm --onedir --windowed ^
   PYTHON_APP_BUILDER.py
 ```
 
-This is a **standalone folder build** (`--onedir`), not a single `.exe` — the app ships as `out/Pyxe/` (containing `Pyxe.exe` and an `_internal/` folder with its bundled runtime and assets). Distribute the whole folder. `user-data/` is created next to `Pyxe.exe` on first run, outside `_internal/`, so your settings and build history survive even if `_internal/` gets replaced by a future build.
+This is a **standalone folder build** (`--onedir`), not a single `.exe` — the app ships as `out/Pywix/` (containing `Pywix.exe` and an `_internal/` folder with its bundled runtime and assets). Distribute the whole folder. `user-data/` is created next to `Pywix.exe` on first run, outside `_internal/`, so your settings and build history survive even if `_internal/` gets replaced by a future build.
 
 <br>
 

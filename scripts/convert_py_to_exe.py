@@ -131,7 +131,7 @@ class ConvertPyToExe():
         self.MainWindow = QWidget()
         self.MainWindow.setWindowOpacity(Style.WindowOpacity)
         self.MainWindow.setWindowFlags(Qt.Window)
-        self.MainWindow.setWindowTitle("Pyxe")
+        self.MainWindow.setWindowTitle("Pywix")
         self.MainWindow.setStyleSheet(Style.MainWindowStyle)
         self.MainWindow.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
         self.MainWindow.resize(1250,750)
@@ -1453,7 +1453,7 @@ class ConvertPyToExe():
         IconLabel.setAlignment(Qt.AlignCenter)
         IconLabel.setStyleSheet("background:transparent;border:none;")
 
-        TitleLabel = QLabel("Pyxe")
+        TitleLabel = QLabel("Pywix")
         TitleLabel.setStyleSheet(Style.AppNameLabelStyle)
         TitleLabel.setAlignment(Qt.AlignCenter)
         Style.TextGlow(TitleLabel)
@@ -1799,7 +1799,7 @@ class ConvertPyToExe():
         AboutTitleLayout = QVBoxLayout()
         AboutTitleLayout.setSpacing(2)
 
-        AppNameLabel = QLabel("Pyxe")
+        AppNameLabel = QLabel("Pywix")
         AppNameLabel.setStyleSheet(Style.AppNameLabelStyle)
         Style.TextGlow(AppNameLabel)
 
