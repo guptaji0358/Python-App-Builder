@@ -711,6 +711,7 @@ class ConvertPyToExe():
         Dialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
         Dialog.setWindowTitle("Build Complete")
         Dialog.setFixedSize(650,300)
+        Dialog.setStyleSheet(Style.DialogStyle)
 
         AppNameLabel = QLabel()
         AppNameLabel.setText(f"App Name: {self.AppNameInput.text()}")
@@ -2129,6 +2130,8 @@ class ConvertPyToExe():
         self.PathDialog = QDialog(self.MainWindow)
         self.PathDialog.resize(850,120)
         self.PathDialog.setWindowTitle("Edit Start Menu Shortcut Creation Path")
+        self.PathDialog.setWindowIcon(QIcon(AssetsPath.ApplicationIcon))
+        self.PathDialog.setStyleSheet(Style.DialogStyle)
 
         Layout = QVBoxLayout()
         Layout = QGridLayout()
