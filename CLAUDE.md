@@ -59,7 +59,7 @@ All source lives under `scripts/`:
 
 **Build defaults vs. Reset:** `CustomizationManager` values only seed the main window's build-type/console-mode radios and checkboxes once, at construction (`ConvertPyToExe.__init__`, right after they're created). `ResetTheApp()` deliberately clears all of them back to fully unchecked regardless of the saved defaults — that's existing, intentional behavior (a full reset, not "back to my defaults"); don't wire `CustomizationManager` into `ResetTheApp()`. The Customize tab's own `Default*` radios/checkboxes are a separate set of widgets that only edit the saved preference (via `SaveCustomizationDefaults`) and never reflect or affect the main window's current in-session choices.
 
-**Bundling gotcha:** `AssetsPath.ApplicationIcon` points at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) until a second `--add-data "APP_BUILDER_ICON.ico;."` was added to bundle it too (also present in `Pywix.spec`'s `datas`). Any asset referenced outside `Assets/` needs the same treatment — bundled explicitly, not assumed to come along with `--icon` or any other single-purpose flag.
+**Bundling gotcha (historical):** `AssetsPath.ApplicationIcon` used to point at `APP_BUILDER_ICON.ico` in the project root, not inside `Assets/`. `--icon` at build time only embeds it as the `.exe` file's own Explorer/taskbar-pin icon — it does **not** put the file inside the frozen app's data, so `QIcon(AssetsPath.ApplicationIcon)` silently returned a null icon at runtime (window/dialog/taskbar icon while running) unless a second `--add-data` bundled it too. The icon now lives in `Assets/APP_BUILDER_ICON.ico`, so it rides along with the existing `--add-data "Assets;Assets"` like every other asset — no separate bundling step needed. Any asset referenced outside `Assets/` would need that separate treatment again, so keep new assets inside `Assets/` unless there's a specific reason not to.
 
 ## Local/runtime config (not tracked in git)
 
@@ -85,7 +85,7 @@ python PYTHON_APP_BUILDER.py
 
 Build the distributable exe (see `Pywix.spec` for the maintained spec):
 ```bash
-python -m PyInstaller --noconfirm --onedir --windowed --name "Pywix" --icon "APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --add-data "APP_BUILDER_ICON.ico;." --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
+python -m PyInstaller --noconfirm --onedir --windowed --name "Pywix" --icon "Assets/APP_BUILDER_ICON.ico" --add-data "Assets;Assets" --distpath "out" --workpath "build" PYTHON_APP_BUILDER.py
 ```
 
 `build/` and `out/` are PyInstaller artifacts — never commit them.

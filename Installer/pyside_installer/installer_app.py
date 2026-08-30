@@ -43,8 +43,8 @@ def PayloadDir():
 
 def AppIconPath():
     if getattr(sys, "frozen", False):
-        return os.path.join(sys._MEIPASS, "APP_BUILDER_ICON.ico")
-    return os.path.join(BaseDir(), "APP_BUILDER_ICON.ico")
+        return os.path.join(sys._MEIPASS, "Assets", "APP_BUILDER_ICON.ico")
+    return os.path.join(BaseDir(), "Assets", "APP_BUILDER_ICON.ico")
 
 
 def DefaultInstallDir():

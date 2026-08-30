@@ -77,8 +77,8 @@ The panel shows the **currently resolved mode** live (e.g. `System → Dark`) an
 ```
 App Builder/
 ├── PYTHON_APP_BUILDER.py     # Entry point — launches the app
-├── APP_BUILDER_ICON.ico      # App icon
-├── Assets/                   # All .svg / .png / .gif UI assets
+├── Assets/                   # All .svg / .png / .gif / .ico UI assets
+│   └── APP_BUILDER_ICON.ico  #   App icon
 ├── scripts/                  # Application source, split into modules
 │   ├── convert_py_to_exe.py  #   Main window / app logic (ConvertPyToExe)
 │   ├── threads.py            #   Background QThreads (file indexing, icon indexing, build)
@@ -123,9 +123,8 @@ On first run you'll be asked to fill in **Company Name, Author, Copyright, and T
 ```bash
 python -m PyInstaller --noconfirm --onedir --windowed ^
   --name "Pywix" ^
-  --icon "APP_BUILDER_ICON.ico" ^
+  --icon "Assets/APP_BUILDER_ICON.ico" ^
   --add-data "Assets;Assets" ^
-  --add-data "APP_BUILDER_ICON.ico;." ^
   --distpath "out" ^
   --workpath "build" ^
   PYTHON_APP_BUILDER.py

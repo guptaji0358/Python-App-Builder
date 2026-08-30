@@ -18,5 +18,5 @@ class AssetsPath:
     RadioChecked = AssetPath("RADIO_BUTTON_CHECKED.svg")
     Loader = AssetPath("LOADER.gif")
     MenuIcon = AssetPath("Menu.svg")
-    ApplicationIcon = os.path.join(BASE_DIR, "APP_BUILDER_ICON.ico").replace("\\", "/")
+    ApplicationIcon = AssetPath("APP_BUILDER_ICON.ico")
     AddStartMenuShortcutPath = "C:/Users/Lenovo/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/ROBIN Apps"
