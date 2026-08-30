@@ -21,6 +21,7 @@ from .customization import CustomizationManager
 from .user_data import UserDataPath, EnsureUserDataDirs
 from .build_history import BuildHistory
 from .file_index_db import PyFileIndexDatabase, IconFileIndexDatabase
+from .post_install import ShowThankYouFireworks
 
 APP_VERSION = "1.0.0.0"
 REPOSITORY_URL = "https://github.com/guptaji0358/Python-App-Builder"
@@ -487,6 +488,10 @@ class ConvertPyToExe():
         # MainVerticalLayout.addStretch()
         self.CloseSplash()
         self.MainWindow.show()
+
+        if "--post-install" in sys.argv:
+            self.ThankYouOverlay = ShowThankYouFireworks()
+
         ConvertPyToExeApp.exec()
         
     def CreateAssetsRow(self):

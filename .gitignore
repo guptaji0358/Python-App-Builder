@@ -5,3 +5,5 @@ version_info.txt
 build/
 out/
 *.spec
+Installer/Output/
+Installer/build_installer_ui/
