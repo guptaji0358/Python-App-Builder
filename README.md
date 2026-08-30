@@ -1,10 +1,10 @@
+<a name="readme-top"></a>
+
 <div align="center">
 
-# 🛠️ Pywix
+<img src=".github/readme/banner.svg" alt="Pywix" width="100%">
 
-**Convert Python scripts into standalone Windows executables — without touching a terminal.**
-
-A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a clean, guided UI so you never have to hand-write a build command again.
+<br><br>
 
 [![Platform](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows&logoColor=white)](#-requirements)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#-requirements)
@@ -15,6 +15,10 @@ A PySide6 desktop tool that wraps [PyInstaller](https://pyinstaller.org/) in a c
 [![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)](#-license)
 
 <sub>Author **Robin Gupta** · Assisted by **Claude Code**</sub>
+
+<br>
+
+### [⬇️ Download the latest installer](https://github.com/guptaji0358/Pywix/releases/latest)
 
 </div>
 
@@ -78,6 +82,9 @@ The panel shows the **currently resolved mode** live (e.g. `System → Dark`) an
 
 ## 📁 Project Structure
 
+<details>
+<summary><b>Click to expand the folder layout</b></summary>
+
 ```
 Pywix/
 ├── PYTHON_APP_BUILDER.py     # Entry point — launches the app
@@ -102,6 +109,8 @@ Pywix/
 │   └── PywixSetup.iss         #   Alternative Inno Setup script for the same install flow
 └── out/                       # Compiled .exe output (generated, not tracked)
 ```
+
+</details>
 
 <br>
 
@@ -168,6 +177,9 @@ The gear icon opens a tabbed **Settings** window:
 
 Generated at runtime, per-machine, and **not tracked in git**. Everything the app owns lives under **`user-data/`**, created next to the running script (or `.exe`) on first launch:
 
+<details>
+<summary><b>Click to expand the file list</b></summary>
+
 | File | Purpose |
 |---|---|
 | `user-data/verification.txt` | Company / Author / Copyright / Trademark |
@@ -178,6 +190,8 @@ Generated at runtime, per-machine, and **not tracked in git**. Everything the ap
 | `user-data/db/py_index.db` | Cached `.py` file search index, for instant autocomplete on startup |
 | `user-data/db/icon_index.db` | Cached `.ico` file search index, for instant autocomplete on startup |
 | `version_info.txt` | Temporary PyInstaller version resource file — written next to the *script being converted*, cleaned up after each build (not part of `user-data/`) |
+
+</details>
 
 <br>
 
@@ -196,6 +210,10 @@ No license specified yet.
 
 <div align="center">
 
+If Pywix saved you a PyInstaller headache, consider giving it a ⭐
+
 **Author:** Robin Gupta · **Assisted by:** Claude Code
+
+[⬆ Back to top](#readme-top)
 
 </div>
