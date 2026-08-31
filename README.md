@@ -32,6 +32,7 @@
 - [Theming](#theming)
 - [Project Structure](#project-structure)
 - [Installing](#installing)
+- [Version History](#version-history)
 - [Getting Started (from source)](#getting-started)
 - [Settings Reference](#settings-reference)
 - [Local Config Files](#local-config-files)
@@ -129,6 +130,37 @@ Pywix/
 Grab the latest installer from the [Releases page](https://github.com/guptaji0358/Pywix/releases/latest) — download `PywixInstaller.exe` (or `PywixSetup.exe` if you prefer the Inno Setup build) and run it. The installer walks you through choosing an install folder, optional desktop/Start Menu shortcuts, and shows live progress while it copies files. On first launch afterward, you'll get a 6-second fireworks send-off.
 
 No Python installation is required to use the installed app — it's a fully self-contained build.
+
+<br>
+
+<a name="version-history"></a>
+
+## <img src="GitHub-Assets/tag.svg" width="18" align="absmiddle"> Version History
+
+Every installer ever published, in one place — no need to dig through the Releases page to see what changed.
+
+<table>
+<tr>
+<th align="left">Version</th>
+<th align="left">Released</th>
+<th align="left">What it provides</th>
+<th align="left">Installer</th>
+</tr>
+<tr>
+<td valign="top"><b>v1.0.1</b><br><sub>latest</sub></td>
+<td valign="top">2026-08-30</td>
+<td valign="top">Renamed the app to <b>Pywix</b> (formerly Python App Builder) — window title, About screen, and installer wizard all updated to match.</td>
+<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.1/PywixInstaller.exe">PywixInstaller.exe</a><br><sub>116 MB</sub></td>
+</tr>
+<tr>
+<td valign="top"><b>v1.0.0</b></td>
+<td valign="top">2026-08-30</td>
+<td valign="top">First release — the PySide6 GUI wrapper for PyInstaller, plus a custom installer with a branded install wizard and a first-launch thank-you celebration.</td>
+<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.0/PythonAppBuilderInstaller.exe">PythonAppBuilderInstaller.exe</a><br><sub>116 MB</sub></td>
+</tr>
+</table>
+
+See the full [Releases page](https://github.com/guptaji0358/Pywix/releases) for release notes and older assets.
 
 <br>
 
