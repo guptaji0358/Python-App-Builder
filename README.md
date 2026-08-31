@@ -150,19 +150,23 @@ Every installer ever published, in one place — no need to dig through the Rele
 <td valign="top"><b>v1.0.2</b><br><sub>latest</sub></td>
 <td valign="top">2026-08-31</td>
 <td valign="top">Added a License/Agreement step to both installers, disclosing the local <code>.py</code>/<code>.ico</code> file indexing (paths and names only, never uploaded) and a note that PyInstaller conversion can briefly use high CPU/memory and warm up the device.</td>
-<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixInstaller.exe">PywixInstaller.exe</a><br><sub>116 MB</sub> · <a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixSetup.exe">PywixSetup.exe</a><br><sub>36 MB</sub></td>
+<td valign="top">
+<a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixInstaller.exe"><img src="https://img.shields.io/badge/⬇-Download-00aaff?style=for-the-badge" alt="Download PywixInstaller.exe"></a><br><sub>PySide6 wizard · 116 MB</sub>
+<br><br>
+<a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixSetup.exe"><img src="https://img.shields.io/badge/⬇-Download-00aaff?style=for-the-badge" alt="Download PywixSetup.exe"></a><br><sub>Inno Setup · 36 MB</sub>
+</td>
 </tr>
 <tr>
 <td valign="top"><b>v1.0.1</b></td>
 <td valign="top">2026-08-30</td>
 <td valign="top">Renamed the app to <b>Pywix</b> (formerly Python App Builder) — window title, About screen, and installer wizard all updated to match.</td>
-<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.1/PywixInstaller.exe">PywixInstaller.exe</a><br><sub>116 MB</sub></td>
+<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.1/PywixInstaller.exe"><img src="https://img.shields.io/badge/⬇-Download-00aaff?style=for-the-badge" alt="Download PywixInstaller.exe"></a><br><sub>116 MB</sub></td>
 </tr>
 <tr>
 <td valign="top"><b>v1.0.0</b></td>
 <td valign="top">2026-08-30</td>
 <td valign="top">First release — the PySide6 GUI wrapper for PyInstaller, plus a custom installer with a branded install wizard and a first-launch thank-you celebration.</td>
-<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.0/PythonAppBuilderInstaller.exe">PythonAppBuilderInstaller.exe</a><br><sub>116 MB</sub></td>
+<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.0/PythonAppBuilderInstaller.exe"><img src="https://img.shields.io/badge/⬇-Download-00aaff?style=for-the-badge" alt="Download PythonAppBuilderInstaller.exe"></a><br><sub>116 MB</sub></td>
 </tr>
 </table>
 

@@ -382,6 +382,24 @@ section { padding: 90px 0; }
   font-size: 12px;
 }
 
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  background: var(--gradient);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.dl-btn:hover { text-decoration: none; box-shadow: 0 6px 18px rgba(0, 170, 255, 0.3); transform: translateY(-1px); }
+.dl-btn img { width: 13px; height: 13px; filter: brightness(0) invert(1); }
+.dl-row { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.dl-label { font-size: 11px; color: var(--muted); }
+
 /* ---------- Footer ---------- */
 footer {
   border-top: 1px solid var(--border);
