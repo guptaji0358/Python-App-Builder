@@ -53,6 +53,12 @@ choice, and a history of your successful builds - all locally, under
 the same user-data folder. See the project's README for the full
 list of files.
 
+PERFORMANCE NOTE
+Converting a script with PyInstaller can briefly use high CPU and
+memory, especially for large projects, and may cause your device to
+run warmer than usual and its fans to spin up during a build. This is
+normal, temporary, and stops once the build finishes.
+
 By continuing, you agree that {app} may perform the local file
 indexing described above on this computer.
 """.format(app=APP_DISPLAY_NAME)
