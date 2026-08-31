@@ -147,7 +147,13 @@ Every installer ever published, in one place — no need to dig through the Rele
 <th align="left">Installer</th>
 </tr>
 <tr>
-<td valign="top"><b>v1.0.1</b><br><sub>latest</sub></td>
+<td valign="top"><b>v1.0.2</b><br><sub>latest</sub></td>
+<td valign="top">2026-08-31</td>
+<td valign="top">Added a License/Agreement step to both installers, disclosing the local <code>.py</code>/<code>.ico</code> file indexing (paths and names only, never uploaded) and a note that PyInstaller conversion can briefly use high CPU/memory and warm up the device.</td>
+<td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixInstaller.exe">PywixInstaller.exe</a><br><sub>116 MB</sub> · <a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.2/PywixSetup.exe">PywixSetup.exe</a><br><sub>36 MB</sub></td>
+</tr>
+<tr>
+<td valign="top"><b>v1.0.1</b></td>
 <td valign="top">2026-08-30</td>
 <td valign="top">Renamed the app to <b>Pywix</b> (formerly Python App Builder) — window title, About screen, and installer wizard all updated to match.</td>
 <td valign="top"><a href="https://github.com/guptaji0358/Pywix/releases/download/v1.0.1/PywixInstaller.exe">PywixInstaller.exe</a><br><sub>116 MB</sub></td>
