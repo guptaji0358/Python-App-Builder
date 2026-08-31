@@ -1,0 +1,26 @@
+Before installing Pywix, please read the following.
+
+WHAT THIS APP DOES
+Pywix converts your Python (.py) scripts into standalone Windows .exe
+files by wrapping PyInstaller in a graphical interface.
+
+IMPORTANT - LOCAL FILE INDEXING
+To power its file-picker autocomplete, Pywix scans your computer for
+.py and .ico files and stores their file paths and names in a local
+index (user-data/db/py_index.db and user-data/db/icon_index.db, next
+to the installed app). This indexing:
+  - runs on your own machine only - nothing is uploaded or sent
+    anywhere over the network;
+  - stores only file paths and file names, never file contents;
+  - is used solely to let you quickly find and select a .py or .ico
+    file when building an app.
+You can delete the user-data folder at any time to erase this index.
+
+OTHER LOCAL DATA
+Pywix also saves your build preferences, keyboard shortcuts, theme
+choice, and a history of your successful builds - all locally, under
+the same user-data folder. See the project's README for the full
+list of files.
+
+By clicking "I accept the agreement" below, you agree that Pywix may
+perform the local file indexing described above on this computer.

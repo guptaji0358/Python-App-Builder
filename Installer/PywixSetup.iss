@@ -22,6 +22,7 @@ Compression=lzma2
 SolidCompression=yes
 SetupIconFile=..\Assets\APP_BUILDER_ICON.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
+LicenseFile=LICENSE_AGREEMENT.txt
 WizardStyle=modern
 WizardSizePercent=100
 DisableWelcomePage=no

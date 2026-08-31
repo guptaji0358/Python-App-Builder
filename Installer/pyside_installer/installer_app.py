@@ -16,7 +16,7 @@ import shutil
 from PySide6.QtWidgets import (
     QApplication, QWizard, QWizardPage, QLabel, QVBoxLayout, QHBoxLayout,
     QLineEdit, QPushButton, QCheckBox, QProgressBar, QFileDialog, QFrame,
-    QSizePolicy,
+    QSizePolicy, QTextEdit,
 )
 from PySide6.QtCore import Qt, QThread, Signal, QEasingCurve, QPropertyAnimation
 from PySide6.QtGui import QIcon
@@ -26,7 +26,36 @@ from installer_style import WizardStyle
 APP_DISPLAY_NAME = "Pywix"
 APP_EXE_NAME = "Pywix.exe"
 
-STEP_NAMES = ["Welcome", "Location", "Options", "Install", "Finish"]
+STEP_NAMES = ["Welcome", "Agreement", "Location", "Options", "Install", "Finish"]
+
+AGREEMENT_TEXT = """\
+Before installing {app}, please read the following.
+
+WHAT THIS APP DOES
+{app} converts your Python (.py) scripts into standalone Windows .exe
+files by wrapping PyInstaller in a graphical interface.
+
+IMPORTANT - LOCAL FILE INDEXING
+To power its file-picker autocomplete, {app} scans your computer for
+.py and .ico files and stores their file paths and names in a local
+index (user-data/db/py_index.db and user-data/db/icon_index.db, next
+to the installed app). This indexing:
+  - runs on your own machine only - nothing is uploaded or sent
+    anywhere over the network;
+  - stores only file paths and file names, never file contents;
+  - is used solely to let you quickly find and select a .py or .ico
+    file when building an app.
+You can delete the user-data folder at any time to erase this index.
+
+OTHER LOCAL DATA
+{app} also saves your build preferences, keyboard shortcuts, theme
+choice, and a history of your successful builds - all locally, under
+the same user-data folder. See the project's README for the full
+list of files.
+
+By continuing, you agree that {app} may perform the local file
+indexing described above on this computer.
+""".format(app=APP_DISPLAY_NAME)
 
 
 def BaseDir():
@@ -182,6 +211,46 @@ class WelcomePage(QWizardPage):
         self.setLayout(PageShell(0, Content))
 
 
+class AgreementPage(QWizardPage):
+    def __init__(self):
+        super().__init__()
+
+        Content = QFrame()
+        Layout = QVBoxLayout()
+        Layout.setContentsMargins(48, 40, 48, 40)
+        Layout.setSpacing(14)
+
+        Badge = QLabel("STEP 1 OF 5")
+        Badge.setObjectName("BadgeLabel")
+        Layout.addWidget(Badge)
+
+        Title = QLabel("License Agreement")
+        Title.setObjectName("TitleLabel")
+        Layout.addWidget(Title)
+
+        AgreementBox = QTextEdit()
+        AgreementBox.setReadOnly(True)
+        AgreementBox.setPlainText(AGREEMENT_TEXT)
+        AgreementBox.setStyleSheet(
+            "QTextEdit { background: #0f1119; border: 1px solid #262a3a;"
+            " border-radius: 8px; padding: 10px; color: #cfd3e0; font-size: 12px; }"
+        )
+        Layout.addWidget(AgreementBox, stretch=1)
+
+        self.AgreeCheckbox = QCheckBox(
+            "I have read and agree to the above, including the local .py / .ico file indexing"
+        )
+        Layout.addWidget(self.AgreeCheckbox)
+        self.AgreeCheckbox.toggled.connect(self.completeChanged)
+
+        Content.setLayout(Layout)
+
+        self.setLayout(PageShell(1, Content))
+
+    def isComplete(self):
+        return self.AgreeCheckbox.isChecked()
+
+
 class LocationPage(QWizardPage):
     def __init__(self):
         super().__init__()
@@ -191,7 +260,7 @@ class LocationPage(QWizardPage):
         Layout.setContentsMargins(48, 40, 48, 40)
         Layout.setSpacing(14)
 
-        Badge = QLabel("STEP 2 OF 4")
+        Badge = QLabel("STEP 2 OF 5")
         Badge.setObjectName("BadgeLabel")
         Layout.addWidget(Badge)
 
@@ -216,7 +285,7 @@ class LocationPage(QWizardPage):
         Layout.addStretch()
         Content.setLayout(Layout)
 
-        self.setLayout(PageShell(1, Content))
+        self.setLayout(PageShell(2, Content))
         self.registerField("InstallDir*", self.PathInput)
 
     def BrowseForFolder(self):
@@ -234,7 +303,7 @@ class OptionsPage(QWizardPage):
         Layout.setContentsMargins(48, 40, 48, 40)
         Layout.setSpacing(14)
 
-        Badge = QLabel("STEP 3 OF 4")
+        Badge = QLabel("STEP 3 OF 5")
         Badge.setObjectName("BadgeLabel")
         Layout.addWidget(Badge)
 
@@ -257,7 +326,7 @@ class OptionsPage(QWizardPage):
         Layout.addStretch()
         Content.setLayout(Layout)
 
-        self.setLayout(PageShell(2, Content))
+        self.setLayout(PageShell(3, Content))
         self.registerField("DesktopShortcut", self.DesktopShortcutCheckbox)
         self.registerField("StartMenuShortcut", self.StartMenuShortcutCheckbox)
 
@@ -287,7 +356,7 @@ class InstallPage(QWizardPage):
         Layout.setContentsMargins(48, 40, 48, 40)
         Layout.setSpacing(14)
 
-        Badge = QLabel("STEP 4 OF 4")
+        Badge = QLabel("STEP 4 OF 5")
         Badge.setObjectName("BadgeLabel")
         Layout.addWidget(Badge)
 
@@ -321,7 +390,7 @@ class InstallPage(QWizardPage):
         Layout.addStretch()
         Content.setLayout(Layout)
 
-        self.setLayout(PageShell(3, Content))
+        self.setLayout(PageShell(4, Content))
 
         self.Animation = QPropertyAnimation(self.ProgressBar, b"value")
         self.Animation.setEasingCurve(QEasingCurve.OutCubic)
@@ -417,7 +486,7 @@ class FinishPage(QWizardPage):
         Layout.addStretch()
         Content.setLayout(Layout)
 
-        self.setLayout(PageShell(4, Content))
+        self.setLayout(PageShell(5, Content))
         self.registerField("LaunchApp", self.LaunchCheckbox)
 
 
@@ -459,6 +528,7 @@ class InstallerWizard(QWizard):
             self.setWindowIcon(QIcon(IconPath))
 
         self.addPage(WelcomePage())
+        self.addPage(AgreementPage())
         self.addPage(LocationPage())
         self.addPage(OptionsPage())
         self.InstallPageRef = InstallPage()
